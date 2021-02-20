@@ -1,0 +1,60 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-md-7">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-camera"></i>Tómate una Foto :)
+        </div>
+        <div (collapsed)="collapsed($event)"
+             (expanded)="expanded($event)"
+             [collapse]="isCollapsed"
+             class="card-body text-center">
+          <webcam [height]="600" 
+          [width]="600" 
+          [trigger]="triggerObservable" 
+            (imageCapture)="handleImage($event)"
+            [allowCameraSwitch]="false"
+            [mirrorImage]="never"
+            (initError)="handleInitError($event)"> 
+          </webcam>
+        </div>
+        <div class="card-footer text-center">
+          <button type="button" class="btn btn-ghost-primary" (click)="triggerSnapshot();">
+            <i class="fa fa-hand-o-up " ></i>&nbsp;Toma tu foto</button>
+        </div>
+      </div>
+    </div> <!--/.col-->
+    <div class="col-md-5">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-save"></i>Guarda
+        </div>
+        <div (collapsed)="collapsed($event)"
+             (expanded)="expanded($event)"
+             [collapse]="isCollapsed"
+             class="card-body text-center">
+             <div class="form-group">
+              <div *ngIf="webcamImage">
+                <img [src]="webcamImage.imageAsDataUrl" />
+              </div>
+              <div class="alert" style="visibility: hidden;"></div>
+              <div class="input-group text-center">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fa fa-edit"></i></span>
+                </div>
+                <input type="text" id="nombre-img" name="nombre-img" class="form-control" placeholder="Nombre de la imagen ...">
+                <div class="input-group-append">
+                  <span class="input-group-text">.jpg</span>
+                </div>
+                <button id="descargar-boton" disabled="true" type="button" class="btn btn-ghost-success" (click)="descargarImagen();" >
+                  <i class="fa fa-download " ></i>&nbsp;Descargar</button>
+              </div>
+              <div class="alert" style="visibility: hidden;"></div>
+              <div class="col-md-12 text-center">
+                <div id="div-alert"></div>
+              </div>
+             </div>
+      </div>
+    </div> <!--/.col-->
+  </div><!--/.row-->
+</div>
