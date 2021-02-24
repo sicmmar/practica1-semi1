@@ -51,48 +51,80 @@
       gtag('config', 'UA-118965717-5');
     </script>
   </head>
-  <body class="c-app flex-row align-items-center">
+  <body class="c-app flex-row align-items-center" onload="start()">
     <div class="container">
       <div class="row justify-content-center">
-        <div class="col-md-6">
-          <div class="card mx-4">
-            <div class="card-body p-4">
-              <h1>Ugram</h1>
-              <p class="text-muted">Crea tu cuenta</p>
-              <div class="input-group mb-3">
-                <div class="input-group-prepend"><span class="input-group-text">
-                    <svg class="c-icon">
-                      <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-at"></use>
-                    </svg></span></div>
-                <input class="form-control" type="text" placeholder="Usuario">
+        <div class="col-md-10">
+          <div class="card-group">
+            <div class="card mx-4">
+              <div class="card-body p-4">
+                <h1>Ugram</h1>
+                <p class="text-muted">Crea tu cuenta</p>
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend"><span class="input-group-text">
+                      <svg class="c-icon">
+                        <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-at"></use>
+                      </svg></span></div>
+                  <input id="in-user" class="form-control" type="text" placeholder="Usuario">
+                  <div id="msg-user"></div>
+                </div>
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend"><span class="input-group-text">
+                      <svg class="c-icon">
+                        <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-user"></use>
+                      </svg></span></div>
+                  <input id="in-name" class="form-control" type="text" placeholder="Nombre Completo">
+                </div>
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend"><span class="input-group-text">
+                      <svg class="c-icon">
+                        <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-lock-locked"></use>
+                      </svg></span></div>
+                  <input id="in-pass1" class="form-control" type="password" placeholder="Contraseña">
+                </div>
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend"><span class="input-group-text">
+                      <svg class="c-icon">
+                        <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-lock-locked"></use>
+                      </svg></span></div>
+                  <input id="in-pass2" class="form-control" type="password" placeholder="Confirme Contraseña">
+                </div>
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend"><span class="input-group-text">
+                      <svg class="c-icon">
+                        <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-camera"></use>
+                      </svg></span></div>
+                  <input id="in-foto" class="form-control" type="text" placeholder="Foto de perfil" disabled>
+                  <div class="input-group-prepend"><span class="input-group-text">.jpg</span></div>
+                </div>
               </div>
-              <div class="input-group mb-3">
-                <div class="input-group-prepend"><span class="input-group-text">
-                    <svg class="c-icon">
-                      <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-user"></use>
-                    </svg></span></div>
-                <input class="form-control" type="text" placeholder="Nombre Completo">
+              <div class="card-footer p-4">
+                <div class="row">
+                  <div class="col-6">
+                    <button class="btn btn-block btn-secondary" type="button" onclick="location.href='/index.html'"><span>Log In</span></button>
+                  </div>
+                  <div class="col-6">
+                    <button class="btn btn-block btn-success" type="button" onclick="registrarUsuario()"><span>Registrar</span></button>
+                  </div>
+                </div>
               </div>
-              <div class="input-group mb-3">
-                <div class="input-group-prepend"><span class="input-group-text">
-                    <svg class="c-icon">
-                      <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-lock-locked"></use>
-                    </svg></span></div>
-                <input class="form-control" type="password" placeholder="Contraseña">
-              </div>
-              <div class="input-group mb-4">
-                <div class="input-group-prepend"><span class="input-group-text">
-                    <svg class="c-icon">
-                      <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-lock-locked"></use>
-                    </svg></span></div>
-                <input class="form-control" type="password" placeholder="Confirme Contraseña">
-              </div>
-              <button class="btn btn-block btn-success" type="button">Crear Cuenta</button>
             </div>
-            <div class="card-footer p-4">
-              <div class="row">
-                <div class="col-6">
-                  <button class="btn btn-block btn-facebook" type="button" onclick="location.href='/'"><span>Regresar</span></button>
+            <div class="card py-5 d-md-down-none" style="width:44%">
+              <div class="card-body text-center">
+                <div>
+                  <h2>Foto de Perfil</h2>
+                  <p>Elije tu foto de perfil</p>
+                  <img id="imagenPrev" width="85%" height="100%" hidden="true" />
+                  <video id="video" width="85%" 
+                    height="100%" autoplay> 
+                  </video>
+                  <button class="btn btn-lg btn-outline-primary mt-3" type="button" onclick="tomarFoto()">¡Toma una ahora!</button>
+                  <button class="btn btn-lg btn-outline-danger mt-3" type="button" onclick="start()"><svg class="c-icon">
+                    <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-ban"></use>
+                  </svg></button>
+                  <button id="btn-use" class="btn btn-lg btn-outline-success mt-3" type="button" onclick="useFoto()"><svg class="c-icon">
+                    <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-check-alt"></use>
+                  </svg></button>
                 </div>
               </div>
             </div>
@@ -104,6 +136,129 @@
     <script src="node_modules/@coreui/coreui/dist/js/coreui.bundle.min.js"></script>
     <!--[if IE]><!-->
     <script src="node_modules/@coreui/icons/js/svgxuse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/core.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/md5.js"></script>
+    <script> 
+      var stop = function () { 
+          var stream = video.srcObject; 
+          var tracks = stream.getTracks(); 
+          for (var i = 0; i < tracks.length; i++) { 
+              var track = tracks[i]; 
+              track.stop(); 
+          } 
+          video.srcObject = null; 
+      } 
+      function start () { 
+        var img = document.getElementById('imagenPrev');
+        img.hidden = true;
+        img.src = "";
+        var foto = document.getElementById('in-foto');
+        foto.removeAttribute('class');
+        foto.setAttribute("class","form-control")
+        foto.value = ""
+
+        var video = document.getElementById('video'), 
+            vendorUrl = window.URL || window.webkitURL; 
+        video.hidden = false
+        if (navigator.mediaDevices.getUserMedia) { 
+            navigator.mediaDevices.getUserMedia({ video: true }) 
+                .then(function (stream) { 
+                    video.srcObject = stream; 
+                }).catch(function (error) { 
+                    console.log("Something went wrong!"); 
+                }); 
+        } 
+
+        document.getElementById('btn-use').disabled = true
+          
+      } 
+      function tomarFoto(){
+        video = document.getElementById("video");
+
+        const canvas = document.createElement("canvas");
+        // scale the canvas accordingly
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        // draw the video at that frame
+        canvas.getContext('2d')
+          .drawImage(video, 0, 0, canvas.width, canvas.height);
+        // convert it to a usable data URL
+        const dataURL = canvas.toDataURL()
+        console.log(dataURL)
+        video.hidden = true
+        imagen = document.getElementById("imagenPrev");
+        imagen.src = dataURL
+        imagen.hidden = false
+
+        var botonUsar = document.getElementById('btn-use');
+        botonUsar.disabled = false
+      }
+
+      function registrarUsuario(){
+        let arr = ['in-user','in-name','in-pass1','in-pass2']
+        for (let index = 0; index < arr.length; index++) {
+          document.getElementById(arr[index]).removeAttribute('class');
+          document.getElementById(arr[index]).setAttribute("class","form-control")  
+        }
+        var username = document.getElementById('in-user');
+        var nombre = document.getElementById('in-name');
+        var pass1 = document.getElementById('in-pass1');
+        var pass2 = document.getElementById('in-pass2');
+        var foto = document.getElementById('in-foto');
+
+        // aca va la peticion para ver si el usuario existe
+        if (username.value != ""){
+          //validaciones del usuario que no exista
+
+          if (nombre.value != ""){
+            if (foto.value != ""){
+              if (pass1.value != ""){
+                if(pass1.value == pass2.value){
+                  var contrasena = CryptoJS.MD5(pass1.value).toString();
+                  for (let index = 0; index < arr.length; index++) {
+                    document.getElementById(arr[index]).removeAttribute('class');
+                    document.getElementById(arr[index]).setAttribute("class","form-control is-valid")  
+                  }
+                }else{
+                  pass2.removeAttribute('class');
+                  pass2.setAttribute("class","form-control is-invalid");
+                  document.getElementById('msg-pass2').value = "Las contraseña no coinciden";
+                }
+              }else{
+                pass1.removeAttribute('class');
+                pass1.setAttribute("class","form-control is-invalid")
+              }
+            }else{
+              foto.removeAttribute('class');
+              foto.setAttribute("class","form-control is-invalid")
+            }
+          }else{
+            nombre.removeAttribute('class');
+            nombre.setAttribute("class","form-control is-invalid")
+          }
+        }else{
+          username.removeAttribute('class');
+          username.setAttribute("class","form-control is-invalid")
+        }
+      }
+
+      function useFoto(){
+        if (document.getElementById('in-user').value == ""){
+          var arr = ["in-foto","in-user"];
+          for (let index = 0; index < arr.length; index++) {
+            document.getElementById(arr[index]).removeAttribute('class')
+            document.getElementById(arr[index]).setAttribute("class","form-control is-invalid")
+          }
+        }else{
+          var nombref = "profile-" + document.getElementById('in-user').value
+          document.getElementById('in-foto').value = nombref;
+          document.getElementById('in-foto').removeAttribute('class')
+          document.getElementById('in-foto').setAttribute("class","form-control is-valid")
+          document.getElementById('in-user').removeAttribute('class')
+          document.getElementById('in-user').setAttribute("class","form-control")
+        }
+      }
+    </script> 
     <!--<![endif]-->
   </body>
 </html>
