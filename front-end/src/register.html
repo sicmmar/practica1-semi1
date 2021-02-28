@@ -51,7 +51,7 @@
       gtag('config', 'UA-118965717-5');
     </script>
   </head>
-  <body class="c-app flex-row align-items-center" onload="start()">
+  <body class="c-app flex-row align-items-center" onload="startPrinc()">
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-md-10">
@@ -148,6 +148,12 @@
           } 
           video.srcObject = null; 
       } 
+
+      function startPrinc(){
+        document.getElementById('in-user').value = ""
+        document.getElementById('in-name').value = ""
+        start();
+      }
       function start () { 
         var img = document.getElementById('imagenPrev');
         img.hidden = true;
@@ -156,6 +162,9 @@
         foto.removeAttribute('class');
         foto.setAttribute("class","form-control")
         foto.value = ""
+        var pass2 = document.getElementById('in-pass2')
+        pass2.removeAttribute('type');
+        pass2.setAttribute('type','password')
 
         var video = document.getElementById('video'), 
             vendorUrl = window.URL || window.webkitURL; 
@@ -219,9 +228,13 @@
                     document.getElementById(arr[index]).removeAttribute('class');
                     document.getElementById(arr[index]).setAttribute("class","form-control is-valid")  
                   }
+
+                  //enviar peticion para registrar un nuevo usuario
                 }else{
                   pass2.removeAttribute('class');
                   pass2.setAttribute("class","form-control is-invalid");
+                  pass2.setAttribute('placeholder','Las contraseñas no coinciden');
+                  pass2.value = "";
                   document.getElementById('msg-pass2').value = "Las contraseña no coinciden";
                 }
               }else{

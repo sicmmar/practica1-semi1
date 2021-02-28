@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<!--
+* CoreUI - Free Bootstrap Admin Template
+* @version v3.4.0
+* @link https://coreui.io
+* Copyright (c) 2020 creativeLabs Łukasz Holeczek
+* Licensed under MIT (https://coreui.io/license)
+-->
+
+<html lang="en">
+  <head>
+    <base href="./">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta name="description" content="CoreUI - Open Source Bootstrap Admin Template">
+    <meta name="author" content="Łukasz Holeczek">
+    <meta name="keyword" content="Bootstrap,Admin,Template,Open,Source,jQuery,CSS,HTML,RWD,Dashboard">
+    <title>Ugram - Álbum</title>
+    <link rel="apple-touch-icon" sizes="57x57" href="assets/favicon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="assets/favicon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="assets/favicon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="assets/favicon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="assets/favicon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="assets/favicon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="assets/favicon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="assets/favicon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="assets/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
+    <link rel="manifest" href="assets/favicon/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="assets/favicon/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <!-- Main styles for this application-->
+    <link href="css/style.css" rel="stylesheet">
+    <!-- Global site tag (gtag.js) - Google Analytics-->
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-118965717-3"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      // Shared ID
+      gtag('config', 'UA-118965717-3');
+      // Bootstrap ID
+      gtag('config', 'UA-118965717-5');
+    </script>
+    <link href="node_modules/@coreui/chartjs/dist/css/coreui-chartjs.css" rel="stylesheet">
+  </head>
+  <body class="c-app">
+    <div class="c-sidebar c-sidebar-dark c-sidebar-fixed c-sidebar-lg-show" id="sidebar">
+      <ul class="c-sidebar-nav">
+        <li class="c-sidebar-nav-title">Perfil</li>
+        <li class="c-sidebar-nav-item"><a class="c-sidebar-nav-link" href="login.html">
+            <svg class="c-sidebar-nav-icon">
+              <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-user"></use>
+            </svg> Ver Perfil</a></li>
+        <li class="c-sidebar-nav-title">Manejo de Fotos</li>
+        <li class="c-sidebar-nav-item"><a class="c-sidebar-nav-link" href="fotos.html">
+            <svg class="c-sidebar-nav-icon">
+              <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-camera"></use>
+            </svg> Fotos</a></li>
+        <li class="c-sidebar-nav-item"><a class="c-sidebar-nav-link" href="album.html">
+            <svg class="c-sidebar-nav-icon">
+              <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-book"></use>
+            </svg> Álbum</a></li>
+      </ul>
+      <button class="c-sidebar-minimizer c-class-toggler" type="button" data-target="_parent" data-class="c-sidebar-minimized"></button>
+    </div>
+    <div class="c-wrapper c-fixed-components">
+      <header class="c-header c-header-light c-header-fixed c-header-with-subheader">
+        <button class="c-header-toggler c-class-toggler d-lg-none mfe-auto" type="button" data-target="#sidebar" data-class="c-sidebar-show">
+          <svg class="c-icon c-icon-lg">
+            <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-menu"></use>
+          </svg>
+        </button><a class="c-header-brand d-lg-none" href="#">
+          <svg width="118" height="46" alt="CoreUI Logo">
+            <use xlink:href="assets/brand/coreui.svg#full"></use>
+          </svg></a>
+        <button class="c-header-toggler c-class-toggler mfs-3 d-md-down-none" type="button" data-target="#sidebar" data-class="c-sidebar-lg-show" responsive="true">
+          <svg class="c-icon c-icon-lg">
+            <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-menu"></use>
+          </svg>
+        </button>
+        <ul class="c-header-nav d-md-down-none">
+          <li class="c-header-nav-item px-3"><a class="c-header-nav-link" href="login.html">Perfil</a></li>
+          <li class="c-header-nav-item px-3"><a class="c-header-nav-link" href="fotos.html">Fotos</a></li>
+          <li class="c-header-nav-item px-3"><a class="c-header-nav-link" href="album.html">Álbum</a></li>
+        </ul>
+        <ul class="c-header-nav ml-auto mr-4">
+          <li class="c-header-nav-item dropdown"><a class="c-header-nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+              <div class="c-avatar"><img class="c-avatar-img" src="assets/img/avatars/6.jpg"></div>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right pt-0">
+              <div class="dropdown-header bg-light py-2"><strong>Perfil</strong></div><a class="dropdown-item" href="#">
+                <svg class="c-icon mr-2">
+                  <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-settings"></use>
+                </svg> Ajustes</a><a class="dropdown-item" href="#">
+              <div class="dropdown-divider"></div><a class="dropdown-item" href="#">
+                <svg class="c-icon mr-2">
+                  <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-account-logout"></use>
+                </svg> Salir</a>
+            </div>
+          </li>
+        </ul>
+      </header>
+      <div class="c-body">
+        <main class="c-main">
+          <div class="container-fluid">
+            <div class="fade-in">
+              <div class="row">
+                <!-- /.col-->
+                <div class="col-sm-6 col-lg-3">
+                  <div class="card text-white bg-warning">
+                    <div class="card-body card-body pb-0 d-flex justify-content-between align-items-start">
+                      <div>
+                        <div class="text-value-lg">9.823</div>
+                        <div>Members online</div>
+                      </div>
+                      <div class="btn-group">
+                        <button class="btn btn-transparent dropdown-toggle p-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <svg class="c-icon">
+                            <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-settings"></use>
+                          </svg>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">Action</a><a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a></div>
+                      </div>
+                    </div>
+                    <div class="c-chart-wrapper mt-3" style="height:70px;">
+                      <canvas class="chart" id="card-chart3" height="70"></canvas>
+                    </div>
+                  </div>
+                </div>
+                <!-- /.col-->
+                <div class="col-sm-6 col-lg-3">
+                  <div class="card text-white bg-danger">
+                    <div class="card-body card-body pb-0 d-flex justify-content-between align-items-start">
+                      <div>
+                        <div class="text-value-lg">9.823</div>
+                        <div>Members online</div>
+                      </div>
+                      <div class="btn-group">
+                        <button class="btn btn-transparent dropdown-toggle p-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <svg class="c-icon">
+                            <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-settings"></use>
+                          </svg>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">Action</a><a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a></div>
+                      </div>
+                    </div>
+                    <div class="c-chart-wrapper mt-3 mx-3" style="height:70px;">
+                      <canvas class="chart" id="card-chart4" height="70"></canvas>
+                    </div>
+                  </div>
+                </div>
+                <!-- /.col-->
+              </div>
+              <!-- /.row-->
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between">
+                    <div>
+                      <h4 class="card-title mb-0">Traffic</h4>
+                      <div class="small text-muted">September 2019</div>
+                    </div>
+                    <div class="btn-toolbar d-none d-md-block" role="toolbar" aria-label="Toolbar with buttons">
+                      <div class="btn-group btn-group-toggle mx-3" data-toggle="buttons">
+                        <label class="btn btn-outline-secondary">
+                          <input id="option1" type="radio" name="options" autocomplete="off"> Day
+                        </label>
+                        <label class="btn btn-outline-secondary active">
+                          <input id="option2" type="radio" name="options" autocomplete="off" checked=""> Month
+                        </label>
+                        <label class="btn btn-outline-secondary">
+                          <input id="option3" type="radio" name="options" autocomplete="off"> Year
+                        </label>
+                      </div>
+                      <button class="btn btn-primary" type="button">
+                        <svg class="c-icon">
+                          <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-cloud-download"></use>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="c-chart-wrapper" style="height:300px;margin-top:40px;">
+                    <canvas class="chart" id="main-chart" height="300"></canvas>
+                  </div>
+                </div>
+                <div class="card-footer">
+                  <div class="row text-center">
+                    <div class="col-sm-12 col-md mb-sm-2 mb-0">
+                      <div class="text-muted">Visits</div><strong>29.703 Users (40%)</strong>
+                      <div class="progress progress-xs mt-2">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                      </div>
+                    </div>
+                    <div class="col-sm-12 col-md mb-sm-2 mb-0">
+                      <div class="text-muted">Unique</div><strong>24.093 Users (20%)</strong>
+                      <div class="progress progress-xs mt-2">
+                        <div class="progress-bar bg-info" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                      </div>
+                    </div>
+                    <div class="col-sm-12 col-md mb-sm-2 mb-0">
+                      <div class="text-muted">Pageviews</div><strong>78.706 Views (60%)</strong>
+                      <div class="progress progress-xs mt-2">
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                      </div>
+                    </div>
+                    <div class="col-sm-12 col-md mb-sm-2 mb-0">
+                      <div class="text-muted">New Users</div><strong>22.123 Users (80%)</strong>
+                      <div class="progress progress-xs mt-2">
+                        <div class="progress-bar bg-danger" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                      </div>
+                    </div>
+                    <div class="col-sm-12 col-md mb-sm-2 mb-0">
+                      <div class="text-muted">Bounce Rate</div><strong>40.15%</strong>
+                      <div class="progress progress-xs mt-2">
+                        <div class="progress-bar" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- /.card-->
+              <div class="row">
+                <div class="col-sm-6 col-lg-4">
+                  <div class="card">
+                    <div class="card-header bg-facebook content-center">
+                      <svg class="c-icon c-icon-3xl text-white my-4">
+                        <use xlink:href="node_modules/@coreui/icons/sprites/brand.svg#cib-facebook-f"></use>
+                      </svg>
+                    </div>
+                    <div class="card-body row text-center">
+                      <div class="col">
+                        <div class="text-value-xl">89k</div>
+                        <div class="text-uppercase text-muted small">friends</div>
+                      </div>
+                      <div class="c-vr"></div>
+                      <div class="col">
+                        <div class="text-value-xl">459</div>
+                        <div class="text-uppercase text-muted small">feeds</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- /.col-->
+                <div class="col-sm-6 col-lg-4">
+                  <div class="card">
+                    <div class="card-header bg-twitter content-center">
+                      <svg class="c-icon c-icon-3xl text-white my-4">
+                        <use xlink:href="node_modules/@coreui/icons/sprites/brand.svg#cib-twitter"></use>
+                      </svg>
+                    </div>
+                    <div class="card-body row text-center">
+                      <div class="col">
+                        <div class="text-value-xl">973k</div>
+                        <div class="text-uppercase text-muted small">followers</div>
+                      </div>
+                      <div class="c-vr"></div>
+                      <div class="col">
+                        <div class="text-value-xl">1.792</div>
+                        <div class="text-uppercase text-muted small">tweets</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- /.col-->
+                <div class="col-sm-6 col-lg-4">
+                  <div class="card">
+                    <div class="card-header bg-linkedin content-center">
+                      <svg class="c-icon c-icon-3xl text-white my-4">
+                        <use xlink:href="node_modules/@coreui/icons/sprites/brand.svg#cib-linkedin"></use>
+                      </svg>
+                    </div>
+                    <div class="card-body row text-center">
+                      <div class="col">
+                        <div class="text-value-xl">500+</div>
+                        <div class="text-uppercase text-muted small">contacts</div>
+                      </div>
+                      <div class="c-vr"></div>
+                      <div class="col">
+                        <div class="text-value-xl">292</div>
+                        <div class="text-uppercase text-muted small">feeds</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- /.col-->
+              </div>
+              <!-- /.row-->
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="card">
+                    
+                  </div>
+                </div>
+                <!-- /.col-->
+              </div>
+              <!-- /.row-->
+            </div>
+          </div>
+        </main>
+        <footer class="c-footer">
+          <div>Mariana Sic. 201504051</div>
+        </footer>
+      </div>
+    </div>
+    <!-- CoreUI and necessary plugins-->
+    <script src="node_modules/@coreui/coreui/dist/js/coreui.bundle.min.js"></script>
+    <!--[if IE]><!-->
+    <script src="node_modules/@coreui/icons/js/svgxuse.min.js"></script>
+    <!--<![endif]-->
+    <!-- Plugins and scripts required by this view-->
+    <script src="node_modules/@coreui/chartjs/dist/js/coreui-chartjs.bundle.js"></script>
+    <script src="node_modules/@coreui/utils/dist/coreui-utils.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>
