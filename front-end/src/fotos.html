@@ -52,7 +52,7 @@
     </script>
     <link href="node_modules/@coreui/chartjs/dist/css/coreui-chartjs.css" rel="stylesheet">
   </head>
-  <body class="c-app">
+  <body class="c-app" onload="cargarFotos()">
     <div class="c-sidebar c-sidebar-dark c-sidebar-fixed c-sidebar-lg-show" id="sidebar">
       <ul class="c-sidebar-nav">
         <li class="c-sidebar-nav-title">Perfil</li>
@@ -94,13 +94,9 @@
         </ul>
         <ul class="c-header-nav ml-auto mr-4">
           <li class="c-header-nav-item dropdown"><a class="c-header-nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-              <div class="c-avatar"><img class="c-avatar-img" src="assets/img/avatars/6.jpg"></div>
+              <div class="c-avatar"><img id="img-perfil" class="c-avatar-img"></div>
             </a>
             <div class="dropdown-menu dropdown-menu-right pt-0">
-              <div class="dropdown-header bg-light py-2"><strong>Perfil</strong></div><a class="dropdown-item" href="#">
-                <svg class="c-icon mr-2">
-                  <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-settings"></use>
-                </svg> Ajustes</a><a class="dropdown-item" href="#">
               <div class="dropdown-divider"></div><a class="dropdown-item" href="#">
                 <svg class="c-icon mr-2">
                   <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-account-logout"></use>
@@ -112,196 +108,57 @@
       <div class="c-body">
         <main class="c-main">
           <div class="container-fluid">
-            <div class="fade-in">
-              <div class="row">
-                <!-- /.col-->
-                <div class="col-sm-6 col-lg-3">
-                  <div class="card text-white bg-warning">
-                    <div class="card-body card-body pb-0 d-flex justify-content-between align-items-start">
-                      <div>
-                        <div class="text-value-lg">9.823</div>
-                        <div>Members online</div>
-                      </div>
-                      <div class="btn-group">
-                        <button class="btn btn-transparent dropdown-toggle p-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          <svg class="c-icon">
-                            <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-settings"></use>
-                          </svg>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">Action</a><a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a></div>
-                      </div>
-                    </div>
-                    <div class="c-chart-wrapper mt-3" style="height:70px;">
-                      <canvas class="chart" id="card-chart3" height="70"></canvas>
-                    </div>
+            <div class="fade-in"><div class="card">
+              <div class="card-body">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <h4 class="card-title mb-0">Fotografía</h4>
                   </div>
                 </div>
-                <!-- /.col-->
-                <div class="col-sm-6 col-lg-3">
-                  <div class="card text-white bg-danger">
-                    <div class="card-body card-body pb-0 d-flex justify-content-between align-items-start">
-                      <div>
-                        <div class="text-value-lg">9.823</div>
-                        <div>Members online</div>
-                      </div>
-                      <div class="btn-group">
-                        <button class="btn btn-transparent dropdown-toggle p-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          <svg class="c-icon">
-                            <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-settings"></use>
-                          </svg>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">Action</a><a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a></div>
-                      </div>
-                    </div>
-                    <div class="c-chart-wrapper mt-3 mx-3" style="height:70px;">
-                      <canvas class="chart" id="card-chart4" height="70"></canvas>
-                    </div>
-                  </div>
-                </div>
-                <!-- /.col-->
-              </div>
-              <!-- /.row-->
-              <div class="card">
-                <div class="card-body">
-                  <div class="d-flex justify-content-between">
-                    <div>
-                      <h4 class="card-title mb-0">Traffic</h4>
-                      <div class="small text-muted">September 2019</div>
-                    </div>
-                    <div class="btn-toolbar d-none d-md-block" role="toolbar" aria-label="Toolbar with buttons">
-                      <div class="btn-group btn-group-toggle mx-3" data-toggle="buttons">
-                        <label class="btn btn-outline-secondary">
-                          <input id="option1" type="radio" name="options" autocomplete="off"> Day
-                        </label>
-                        <label class="btn btn-outline-secondary active">
-                          <input id="option2" type="radio" name="options" autocomplete="off" checked=""> Month
-                        </label>
-                        <label class="btn btn-outline-secondary">
-                          <input id="option3" type="radio" name="options" autocomplete="off"> Year
-                        </label>
-                      </div>
-                      <button class="btn btn-primary" type="button">
-                        <svg class="c-icon">
-                          <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-cloud-download"></use>
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                  <div class="c-chart-wrapper" style="height:300px;margin-top:40px;">
-                    <canvas class="chart" id="main-chart" height="300"></canvas>
-                  </div>
-                </div>
-                <div class="card-footer">
-                  <div class="row text-center">
-                    <div class="col-sm-12 col-md mb-sm-2 mb-0">
-                      <div class="text-muted">Visits</div><strong>29.703 Users (40%)</strong>
-                      <div class="progress progress-xs mt-2">
-                        <div class="progress-bar bg-success" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                    </div>
-                    <div class="col-sm-12 col-md mb-sm-2 mb-0">
-                      <div class="text-muted">Unique</div><strong>24.093 Users (20%)</strong>
-                      <div class="progress progress-xs mt-2">
-                        <div class="progress-bar bg-info" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                    </div>
-                    <div class="col-sm-12 col-md mb-sm-2 mb-0">
-                      <div class="text-muted">Pageviews</div><strong>78.706 Views (60%)</strong>
-                      <div class="progress progress-xs mt-2">
-                        <div class="progress-bar bg-warning" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                    </div>
-                    <div class="col-sm-12 col-md mb-sm-2 mb-0">
-                      <div class="text-muted">New Users</div><strong>22.123 Users (80%)</strong>
-                      <div class="progress progress-xs mt-2">
-                        <div class="progress-bar bg-danger" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                    </div>
-                    <div class="col-sm-12 col-md mb-sm-2 mb-0">
-                      <div class="text-muted">Bounce Rate</div><strong>40.15%</strong>
-                      <div class="progress progress-xs mt-2">
-                        <div class="progress-bar" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="row">
+                  <!-- /.col-->
+                  <div class="col-sm-6 col-md-5">
+                    <div class="card card-accent-warning">
+                      <div class="card-header">Elige foto</div>
+                      <div class="card-body text-center">
+                        <div class="form-group">
+                          <input id="photo-edit" type="file" name="file-multiple-input" accept="image/png, image/jpeg" onchange="subirImg()">
+                        </div>
+                        <div class="form-group">
+                          <img id="prev-img" width="85%" height="100%"/>
+                        </div>
                       </div>
                     </div>
                   </div>
+                  <!-- /.col-->
+                  <div class="col-sm-6 col-md-6">
+                    <div class="card card-accent-secondary">
+                      <div class="card-header">Subir Foto</div>
+                      <div class="card-body text-center">
+                        <div class="form-group">
+                          <label for="company">Nombre de la foto</label>
+                          <div class="input-group">
+                            <input class="form-control" id="name-photo" type="text">
+                            <div id="ext-img" class="input-group-append"></div>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="ccmonth">Elige el álbum</label>
+                          <select class="form-control" id="album-chooser">
+                          </select>
+                        </div>
+                      </div>
+                      <div class="card-footer">
+                        <button class="btn btn-sm btn-success" type="submit"> Subir</button>
+                        <button class="btn btn-sm btn-danger" type="reset" onclick="location.href='fotos.html'"> Cancelar</button>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /.col-->
                 </div>
               </div>
-              <!-- /.card-->
-              <div class="row">
-                <div class="col-sm-6 col-lg-4">
-                  <div class="card">
-                    <div class="card-header bg-facebook content-center">
-                      <svg class="c-icon c-icon-3xl text-white my-4">
-                        <use xlink:href="node_modules/@coreui/icons/sprites/brand.svg#cib-facebook-f"></use>
-                      </svg>
-                    </div>
-                    <div class="card-body row text-center">
-                      <div class="col">
-                        <div class="text-value-xl">89k</div>
-                        <div class="text-uppercase text-muted small">friends</div>
-                      </div>
-                      <div class="c-vr"></div>
-                      <div class="col">
-                        <div class="text-value-xl">459</div>
-                        <div class="text-uppercase text-muted small">feeds</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- /.col-->
-                <div class="col-sm-6 col-lg-4">
-                  <div class="card">
-                    <div class="card-header bg-twitter content-center">
-                      <svg class="c-icon c-icon-3xl text-white my-4">
-                        <use xlink:href="node_modules/@coreui/icons/sprites/brand.svg#cib-twitter"></use>
-                      </svg>
-                    </div>
-                    <div class="card-body row text-center">
-                      <div class="col">
-                        <div class="text-value-xl">973k</div>
-                        <div class="text-uppercase text-muted small">followers</div>
-                      </div>
-                      <div class="c-vr"></div>
-                      <div class="col">
-                        <div class="text-value-xl">1.792</div>
-                        <div class="text-uppercase text-muted small">tweets</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- /.col-->
-                <div class="col-sm-6 col-lg-4">
-                  <div class="card">
-                    <div class="card-header bg-linkedin content-center">
-                      <svg class="c-icon c-icon-3xl text-white my-4">
-                        <use xlink:href="node_modules/@coreui/icons/sprites/brand.svg#cib-linkedin"></use>
-                      </svg>
-                    </div>
-                    <div class="card-body row text-center">
-                      <div class="col">
-                        <div class="text-value-xl">500+</div>
-                        <div class="text-uppercase text-muted small">contacts</div>
-                      </div>
-                      <div class="c-vr"></div>
-                      <div class="col">
-                        <div class="text-value-xl">292</div>
-                        <div class="text-uppercase text-muted small">feeds</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- /.col-->
-              </div>
-              <!-- /.row-->
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="card">
-                    
-                  </div>
-                </div>
-                <!-- /.col-->
-              </div>
-              <!-- /.row-->
+            </div>
+            <!-- /.card-->
             </div>
           </div>
         </main>
@@ -319,5 +176,26 @@
     <script src="node_modules/@coreui/chartjs/dist/js/coreui-chartjs.bundle.js"></script>
     <script src="node_modules/@coreui/utils/dist/coreui-utils.js"></script>
     <script src="js/main.js"></script>
+    <script>
+      function subirImg(){
+        var imgInput = document.getElementById('photo-edit');
+        var preview = document.getElementById('prev-img');
+        var reader = new FileReader();
+        var file = imgInput.files[0]; 
+
+        reader.addEventListener("load", function () {
+          preview.src = reader.result;
+        }, false);
+
+        if (file) {
+          reader.readAsDataURL(file);
+        }
+
+        var arr = imgInput.value.split("C:\\fakepath\\")[1].split('.');
+        document.getElementById('name-photo').value = arr[0];
+        document.getElementById('ext-img').innerHTML = '<span class="input-group-text">' + arr[1] + '</span>';
+
+      }
+    </script>
   </body>
 </html>

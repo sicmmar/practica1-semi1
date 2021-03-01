@@ -94,13 +94,9 @@
         </ul>
         <ul class="c-header-nav ml-auto mr-4">
           <li class="c-header-nav-item dropdown"><a class="c-header-nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-              <div class="c-avatar"><img class="c-avatar-img" src="assets/img/avatars/6.jpg"></div>
+              <div class="c-avatar"><img id="img-perfil" class="c-avatar-img"></div>
             </a>
             <div class="dropdown-menu dropdown-menu-right pt-0">
-              <div class="dropdown-header bg-light py-2"><strong>Perfil</strong></div><a class="dropdown-item" href="#">
-                <svg class="c-icon mr-2">
-                  <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-settings"></use>
-                </svg> Ajustes</a><a class="dropdown-item" href="#">
               <div class="dropdown-divider"></div><a class="dropdown-item" href="#">
                 <svg class="c-icon mr-2">
                   <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-account-logout"></use>
@@ -178,8 +174,11 @@
                       <div class="form-group">
                         <label for="company">Actualiza tu foto de perfil</label>
                         <div class="col-md-9">
-                          <input id="photo-edit" type="file" name="file-multiple-input" multiple="">
+                          <input id="photo-edit" onchange="cambPerfil()" type="file" accept="image/png, image/jpeg">
                         </div>
+                      </div>
+                      <div class="form-group">
+                        <img id="prev-p-img" width="85%" height="100%"/>
                       </div>
                       <div class="form-group">
                         <label for="company">Confirma contraseña</label>
@@ -212,5 +211,21 @@
     <script src="node_modules/@coreui/chartjs/dist/js/coreui-chartjs.bundle.js"></script>
     <script src="node_modules/@coreui/utils/dist/coreui-utils.js"></script>
     <script src="js/main.js"></script>
+    <script>
+      function cambPerfil(){
+        var imgInput = document.getElementById('photo-edit');
+        var preview = document.getElementById('prev-p-img');
+        var reader = new FileReader();
+        var file = imgInput.files[0]; 
+
+        reader.addEventListener("load", function () {
+          preview.src = reader.result;
+        }, false);
+
+        if (file) {
+          reader.readAsDataURL(file);
+        }
+      }
+    </script>
   </body>
 </html>
