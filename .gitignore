@@ -105,3 +105,7 @@ dist
 
 #files
 credenciales.js
+back-end/python/credenciales.py
+back-end/python/__pycache__/
+back-end/python/env/
+back-end/python/credenciales/
