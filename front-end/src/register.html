@@ -97,6 +97,7 @@
                   <input id="in-foto" class="form-control" type="text" placeholder="Foto de perfil" disabled>
                   <div class="input-group-prepend"><span class="input-group-text">.jpg</span></div>
                 </div>
+                <div class="input-group mb-3" id="ALARMA"></div>
               </div>
               <div class="card-footer p-4">
                 <div class="row">
@@ -138,6 +139,7 @@
     <script src="node_modules/@coreui/icons/js/svgxuse.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/core.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/md5.js"></script>
+    <script src="js/clientAPI.js"></script>
     <script> 
       var stop = function () { 
           var stream = video.srcObject; 
@@ -203,7 +205,7 @@
         botonUsar.disabled = false
       }
 
-      function registrarUsuario(){
+      const registrarUsuario = async () => {
         let arr = ['in-user','in-name','in-pass1','in-pass2']
         for (let index = 0; index < arr.length; index++) {
           document.getElementById(arr[index]).removeAttribute('class');
@@ -214,6 +216,7 @@
         var pass1 = document.getElementById('in-pass1');
         var pass2 = document.getElementById('in-pass2');
         var foto = document.getElementById('in-foto');
+        var imagen = document.getElementById("imagenPrev");
 
         // aca va la peticion para ver si el usuario existe
         if (username.value != ""){
@@ -230,6 +233,33 @@
                   }
 
                   //enviar peticion para registrar un nuevo usuario
+                  data = JSON.stringify({
+                    "username": username.value,
+                    "nombre":nombre.value,
+                    "contrasena": contrasena,
+                    "nFoto": foto.value,
+                    "ext":"jpg",
+                    "b64": imagen.src
+                  });
+
+                  const respuesta = await registro(data);
+                  var existe = respuesta['existe'];
+                  var status = respuesta['status'];
+                  if (existe == 'true'){
+                    username.removeAttribute('class');
+                    username.setAttribute("class","form-control is-invalid")
+                    username.setAttribute('placeholder','Este usuario ya existe');
+                    document.getElementById('ALARMA').innerHTML = '<div class="alert alert-danger" role="alert">Usuario <strong>' + username.value + '</strong> ya existe.</div>';
+                    pass1.value = "", pass2.value = "";
+                  }else if (existe == 'false' && (status >= 200 && status < 300)){
+                    document.getElementById('ALARMA').innerHTML = '<div class="alert alert-success" role="alert">Usuario Creado con Éxito. Ingresa a tu cuenta <a class="alert-link" href="index.html">aquí</a>.</div>';
+                    pass1.value = "", pass2.value = "", imagen.src = "";
+                  }else{
+                    username.removeAttribute('class');
+                    username.setAttribute("class","form-control is-invalid")
+                    username.setAttribute('placeholder','Hubo un error al crear este usuario. Intente más tarde');
+                  }
+                  
                 }else{
                   pass2.removeAttribute('class');
                   pass2.setAttribute("class","form-control is-invalid");

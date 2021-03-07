@@ -51,7 +51,7 @@
       gtag('config', 'UA-118965717-5');
     </script>
   </head>
-  <body class="c-app flex-row align-items-center">
+  <body class="c-app flex-row align-items-center" onload="login()">
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-md-8">
@@ -65,14 +65,16 @@
                       <svg class="c-icon">
                         <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-user"></use>
                       </svg></span></div>
-                  <input class="form-control" type="text" placeholder="Usuario">
+                  <input id="in-user" class="form-control" type="text" placeholder="Usuario">
                 </div>
                 <div class="input-group mb-4">
                   <div class="input-group-prepend"><span class="input-group-text">
                       <svg class="c-icon">
                         <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-lock-locked"></use>
                       </svg></span></div>
-                  <input class="form-control" type="password" placeholder="Contraseña">
+                  <input id="in-pass" class="form-control" type="password" placeholder="Contraseña">
+                </div>
+                <div id="ALERT-LOGIN" class="input-group mb-4">
                 </div>
                 <div class="row">
                   <div class="col-6">
@@ -98,10 +100,51 @@
     <script src="node_modules/@coreui/coreui/dist/js/coreui.bundle.min.js"></script>
     <!--[if IE]><!-->
     <script src="node_modules/@coreui/icons/js/svgxuse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/core.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/md5.js"></script>
+    <script src="js/clientAPI.js"></script>
     <!--<![endif]-->
     <script>
-      function ingreso(){
-        location.href='login.html';
+      function login(){
+        sessionStorage.clear();
+      }
+
+      const ingreso = async () => {
+        var username = document.getElementById('in-user');
+        var pass = document.getElementById('in-pass');
+        var alarma = document.getElementById('ALERT-LOGIN');
+        var contrasena = CryptoJS.MD5(pass.value).toString();
+
+        if (username.value == "" || pass.value == ""){
+          alarma.innerHTML = '<div class="alert alert-danger" role="alert">Debe proveer un usuario/contraseña</div>';
+        }else{
+          data = JSON.stringify({
+            "username": username.value,
+            "contrasena": contrasena
+          });
+
+          const respuesta = await ingresoURL(data);
+          if (respuesta['status'] == 202){
+            var sesion = respuesta['Item'];
+            if (sesion == ''){
+              alarma.innerHTML = '<div class="alert alert-warning" role="alert">Credenciales incorrectas para <strong>' + username.value + '</strong></div>';
+            }else{
+              alarma.innerHTML = '<div class="alert alert-success" role="alert">Bienvenido/a <strong>' + username.value + '</strong></div>';
+              sessionStorage.setItem('contrasena', respuesta['Item']['contrasena']['S']);
+              sessionStorage.setItem('foto_perfil', respuesta['Item']['foto_perfil']['S']);
+              sessionStorage.setItem('nombre', respuesta['Item']['nombre']['S']);
+              sessionStorage.setItem('username', respuesta['Item']['username']['S']);
+              location.href='login.html';
+            }
+
+          }else if (respuesta['status'] == 303){
+            alarma.innerHTML = '<div class="alert alert-warning" role="alert">El usuario <strong>' + username.value + '</strong> no existe.</div>';
+          }else{
+            alarma.innerHTML = '<div class="alert alert-danger" role="alert">Debe proveer un usuario/contraseña</div>';
+          }
+          
+          pass.value = "";
+        }
       }
     </script>
   </body>

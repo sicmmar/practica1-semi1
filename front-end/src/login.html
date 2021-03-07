@@ -52,7 +52,8 @@
     </script>
     <link href="node_modules/@coreui/chartjs/dist/css/coreui-chartjs.css" rel="stylesheet">
   </head>
-  <body class="c-app">
+  <script src="js/check-s.js" ></script>
+  <body class="c-app" onload="verificarToken()">
     <div class="c-sidebar c-sidebar-dark c-sidebar-fixed c-sidebar-lg-show" id="sidebar">
       <ul class="c-sidebar-nav">
         <li class="c-sidebar-nav-title">Perfil</li>
@@ -211,6 +212,7 @@
     <script src="node_modules/@coreui/chartjs/dist/js/coreui-chartjs.bundle.js"></script>
     <script src="node_modules/@coreui/utils/dist/coreui-utils.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/clientAPI.js"></script>
     <script>
       function cambPerfil(){
         var imgInput = document.getElementById('photo-edit');
