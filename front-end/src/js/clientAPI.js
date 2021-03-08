@@ -15,6 +15,7 @@ const registro = async (cuerpo) => {
     return respuesta
 }
 
+// PARA INGRESO DE UN USUARIO
 const ingresoURL = async (cuerpo) => {
     const response = await fetch("http://" + URL + "/ingresar", {
         method : "POST",
@@ -27,4 +28,19 @@ const ingresoURL = async (cuerpo) => {
 
     const respuesta = await response.json();
     return respuesta;
+}
+
+// PARA EDITAR DATOS DE USUARIO
+const edicion = async (cuerpo) => {
+    const response = await fetch("http://" + URL + "/editarPerfil", {
+        method: "POST",
+        headers: {
+            "Content-Type":"application/json",
+            Accept : "application/json"
+        },
+        body : cuerpo
+    });
+
+    const respuesta = await response.json();
+    return respuesta
 }

@@ -27,6 +27,9 @@ BUCKET_NAME='practica1-g45-imagenes'
 def result():
     return str("Jau")
 
+###############################################################################################################################################
+# MANEJO DE USUARIOS 
+
 #ingreso a la app
 @app.route('/ingresar', methods=['POST'])
 def ingresar():
@@ -67,28 +70,115 @@ def registrar():
     image_data = bytes(image_data, encoding="ascii")
     ubicacion = 'fotos_perfil/' + nFoto + '-' + uniqueID + '.' + ext 
 
-    res = s3.upload_fileobj(
+    s3.upload_fileobj(
         BytesIO(base64.b64decode(image_data)),
         BUCKET_NAME,
         ubicacion,
         ExtraArgs={'ACL': 'public-read'}
     )
     #res = s3.upload_file("foto","practica1-g45-imagenes",foto)
-    print(res)
-
-
-    resp = dynamo.put_item(
+    
+    dynamo.put_item(
         TableName='usuario',
-        Item={
+        Item = {
             'username': {'S': usern},
             'nombre': {'S': nombre},
             'contrasena': {'S': passw},
             'nFoto' : {'S': nFoto + '.' + ext},
-            'foto_perfil': {'S': "https://practica1-g45-imagenes.s3.us-east-2.amazonaws.com/" + ubicacion}
+            'foto_perfil': {'S': "https://practica1-g45-imagenes.s3.us-east-2.amazonaws.com/" + ubicacion},
+            'album':{'L':[{'L': [{'S':'Perfil'},{'L':[{'S': "https://practica1-g45-imagenes.s3.us-east-2.amazonaws.com/" + ubicacion}]}]}]}       
         }
     )
-    status = resp['ResponseMetadata']['HTTPStatusCode']
-    return jsonify({'status': status,'existe': "false"})
+
+    #status = resp['ResponseMetadata']['HTTPStatusCode']
+    return jsonify({'status': 202,'existe': "false"})
+
+#editar datos del perfil de usuario
+@app.route('/editarPerfil', methods=['POST'])
+def editarPerfil():
+    usern = request.json.get('username')
+    nombre = request.json.get('nombre')
+    passw = request.json.get('contrasena')
+    nFoto = request.json.get('nFoto')
+    ext = request.json.get('ext')
+    b64 = request.json.get('b64')
+    uniqueID = str(uuid.uuid1().time_low)
+
+    if not usern or not nombre or not passw or not nFoto:
+        return jsonify({'status': 504,'Item': ''})
+
+    if usuarioExistente(usern): 
+        if passw == usuarioExistente(usern)['contrasena']['S']:
+            starter = b64.find(',')
+            image_data = b64[starter+1:]
+            image_data = bytes(image_data, encoding="ascii")
+            ubicacion = 'fotos_perfil/' + nFoto + '-' + uniqueID + '.' + ext 
+
+            album_perfil = usuarioExistente(usern)['album']
+            for alb in album_perfil['L']:
+                #aca es cada album
+                if alb['L'][0]['S'] == 'Perfil':
+                    alb['L'][1]['L'].append({'S': "https://practica1-g45-imagenes.s3.us-east-2.amazonaws.com/" + ubicacion})
+                    break
+
+            s3.upload_fileobj(
+                BytesIO(base64.b64decode(image_data)),
+                BUCKET_NAME,
+                ubicacion,
+                ExtraArgs={'ACL': 'public-read'}
+            )
+
+            dynamo.update_item(
+                TableName='usuario',
+                Key = {
+                    'username': {'S': usern}
+                },
+                UpdateExpression = 'set nombre=:n, nFoto=:nf, foto_perfil=:fp, album=:prof',
+                ExpressionAttributeValues = {
+                    ':n': {'S': nombre},
+                    ':nf': {'S': nFoto + '.' + ext},
+                    ':fp': {'S': "https://practica1-g45-imagenes.s3.us-east-2.amazonaws.com/" + ubicacion},
+                    ':prof':album_perfil
+                }
+            )
+            return jsonify({'status': 202,'Item': usuarioExistente(usern)})
+        
+        else: return jsonify({'status': 303,'Item': usuarioExistente(usern)})
+
+    return jsonify({'status': 202,'Item': ''})
+
+
+###############################################################################################################################################
+# MANEJO DE ALBUM
+
+# Nuevo album
+@app.route('/newAlbum', methods=['POST'])
+def newAlbum():
+    usern = request.json.get('username')
+    nombre_album = request.json.get('album')
+
+    if not usern or not nombre_album:
+        return jsonify({'status': 504,'existe': ''})
+
+    item = usuarioExistente(usern)
+    if item:
+        albumes = usuarioExistente(usern)['album']
+        albumes['L'].append({'L': [{'S':nombre_album},{'L':[]}]})
+        
+        dynamo.update_item(
+            TableName='usuario',
+            Key = {
+                'username': {'S': usern}
+            },
+            UpdateExpression = 'set album=:nal',
+            ExpressionAttributeValues = {
+                ':nal': albumes
+            }
+        )
+        
+        return jsonify({'status': 202,'existe': usuarioExistente(usern)})
+
+    return jsonify({'status': 404,'existe':'true'})
 
 def usuarioExistente(usernam):
     existe = dynamo.get_item(
