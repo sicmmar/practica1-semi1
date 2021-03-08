@@ -180,6 +180,92 @@ def newAlbum():
 
     return jsonify({'status': 404,'existe':'true'})
 
+# Eliminar album
+@app.route('/deleteAlbum', methods=['POST'])
+def deleteAlbum():
+    usern = request.json.get('username')
+    nombre_album = request.json.get('album')
+
+    if not usern or not nombre_album:
+        return jsonify({'status': 504,'existe': ''})
+
+    item = usuarioExistente(usern)
+    if item:
+        albumes = usuarioExistente(usern)['album']
+        pos = 0
+        for x in range(0,len(albumes['L'])):
+            if albumes['L'][x]['L'][0]['S'] == nombre_album:
+                pos = x
+                break
+        
+        albumes['L'].pop(pos)
+        
+        dynamo.update_item(
+            TableName='usuario',
+            Key = {
+                'username': {'S': usern}
+            },
+            UpdateExpression = 'set album=:nal',
+            ExpressionAttributeValues = {
+                ':nal': albumes
+            }
+        )
+        
+        return jsonify({'status': 202,'existe': usuarioExistente(usern)})
+
+    return jsonify({'status': 404,'existe':'true'})
+
+# Subir foto nueva en un album
+@app.route('/nuevaFoto', methods=['POST'])
+def nuevaFoto():
+    usern = request.json.get('username')
+    nombre_foto = request.json.get('nFoto')
+    extension = request.json.get('ext')
+    nombre_album = request.json.get('album')
+    b64 = request.json.get('b64')
+    uniqueID = str(uuid.uuid1().time_low)
+
+    if not usern or not nombre_album:
+        return jsonify({'status': 504,'existe': ''})
+
+    item = usuarioExistente(usern)
+    if item:
+        starter = b64.find(',')
+        image_data = b64[starter+1:]
+        image_data = bytes(image_data, encoding="ascii")
+        ubicacion = 'fotos_publicadas/' + nombre_foto + '-' + uniqueID + '.' + extension
+
+        s3.upload_fileobj(
+            BytesIO(base64.b64decode(image_data)),
+            BUCKET_NAME,
+            ubicacion,
+            ExtraArgs={'ACL': 'public-read'}
+        )
+
+        albumes = usuarioExistente(usern)['album']
+        for x in range(0,len(albumes['L'])):
+            if albumes['L'][x]['L'][0]['S'] == nombre_album:
+                albumes['L'][x]['L'][1]['L'].append({'S': "https://practica1-g45-imagenes.s3.us-east-2.amazonaws.com/" + ubicacion})
+                break
+                
+        dynamo.update_item(
+            TableName='usuario',
+            Key = {
+                'username': {'S': usern}
+            },
+            UpdateExpression = 'set album=:nal',
+            ExpressionAttributeValues = {
+                ':nal': albumes
+            }
+        )
+        
+        return jsonify({'status': 202,'existe': usuarioExistente(usern)})
+
+    return jsonify({'status': 404,'existe':'true'})
+
+
+###############################################################################################################################################
+
 def usuarioExistente(usernam):
     existe = dynamo.get_item(
         TableName='usuario',

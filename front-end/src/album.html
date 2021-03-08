@@ -126,6 +126,7 @@
                           </div>
                         </div>
                       </div>
+                      <div id="ALERT-NEW"></div>
                     </div>
                   </div>
                 </div>
@@ -141,40 +142,16 @@
                         </div>
                         <div class="col-md-2">
                           <div class="form-group">
-                            <button class="btn btn-danger" type="button">Eliminar</button>
+                            <button class="btn btn-danger" type="button" onclick="eliminarAlbum()">Eliminar</button>
                           </div>
                         </div>
                       </div>
+                      <div id="ALERT-DEL"></div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="card">
-                <div class="card-body">
-                  <div class="d-flex justify-content-between">
-                    <div>
-                      <h4 class="card-title mb-0">Fotos de Perfil</h4>
-                    </div>
-                    <div class="btn-toolbar d-none d-md-block" role="toolbar" aria-label="Toolbar with buttons">
-                      <button class="btn btn-primary" type="button">
-                        <svg class="c-icon">
-                          <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-pencil"></use>
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-sm-6 col-lg-3">
-                      <div class="card">
-                        <div class="card-body text-center">
-                          <img width="85%" height="100%"/>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <!-- /.row-->
+              <div id="ALBUMES"></div>
             </div>
           </div>
         </main>
@@ -191,19 +168,62 @@
     <!-- Plugins and scripts required by this view-->
     <script src="node_modules/@coreui/chartjs/dist/js/coreui-chartjs.bundle.js"></script>
     <script src="node_modules/@coreui/utils/dist/coreui-utils.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/clientAPI.js"></script>
     <script>
-      function verToken(){
+      const verToken = async () => {
         const pass = sessionStorage.getItem('contrasena');
           if (pass == null){
             window.location = 'index.html';
           }else{
+            var listaHTML = ''
+            document.getElementById('ALERT-NEW').innerHTML = ''
+            var cartaAlbum = ''
             document.getElementById('img-perfil').src = sessionStorage.getItem('foto_perfil');
+            const listaAlbum = await connectAPI(JSON.stringify({'username': sessionStorage.getItem('username'), 'contrasena':sessionStorage.getItem('contrasena')}), 'ingresar')
+            listaAlbum['Item']['album']['L'].forEach(element => {
+              if (element['L'][0]['S'] != 'Perfil') listaHTML += '<option>' + element['L'][0]['S'] + '</option>';
+              // ---------------------------- PARA MOSTRAR LOS ALBUMES -----------------------------------//
+              cartaAlbum += '<div class="card"><div class="card-body"><div class="d-flex justify-content-between"><div><h4 class="card-title mb-0">';
+              cartaAlbum += element['L'][0]['S'] + '</h4></div></div><div class="row">'
+              element['L'][1]['L'].forEach(fotico =>{
+                cartaAlbum += '<div class="col-sm-6 col-lg-3"><div class="card"><div class="card-body text-center"><img width="85%" height="100%" src="';
+                cartaAlbum += fotico['S'] + '"/></div></div></div>';
+              });
+              cartaAlbum += '</div></div></div>'
+            });
+
+            document.getElementById('album-chooser').innerHTML = listaHTML;
+            document.getElementById('ALBUMES').innerHTML = cartaAlbum;
+
           }
       }
 
       const crearAlbum = async () => {
-        
+        var ALERTA = document.getElementById('ALERT-NEW');
+        var nombrenuevo = document.getElementById('name-album').value
+        if (nombrenuevo != ''){
+          const resp = await connectAPI(JSON.stringify({'username':sessionStorage.getItem('username'), 'album':nombrenuevo}), 'newAlbum');
+          if(resp['status'] == 202 && resp['existe'] != ''){
+            document.getElementById('name-album').value = "";
+            ALERTA.innerHTML = '<div class="alert alert-success" role="alert">El álbum <strong>' + nombrenuevo + '</strong> ha sido creado. Recarga la <a class="alert-link" href="album.html">página</a>.</div>';
+          }else ALERTA.innerHTML = '<div class="alert alert-warning" role="alert">El álbum <strong>' + nombrenuevo + '</strong> no se ha podido crear.</div>';
+        }else{
+          ALERTA.innerHTML = '<div class="alert alert-danger" role="alert">Ingrese el nombre del álbum a crear.</div>';
+        }
+
+      }
+
+      const eliminarAlbum = async () => {
+        var ALERTA = document.getElementById('ALERT-DEL');
+        var listaOpc = document.getElementById('album-chooser')
+        if(listaOpc.value == 'Perfil'){
+          ALERTA.innerHTML = '<div class="alert alert-danger" role="alert">El álbum <strong>' + listaOpc.value + '</strong> no se puede eliminar. Intente con otro.</div>';
+        }else{
+          const resp = await connectAPI(JSON.stringify({'username':sessionStorage.getItem('username'), 'album':listaOpc.value}), 'deleteAlbum');
+          if(resp['status'] == 202 && resp['existe'] != ''){
+            ALERTA.innerHTML = '<div class="alert alert-success" role="alert">El álbum <strong>' + listaOpc.value + '</strong> ha sido eliminado. Recarga la <a class="alert-link" href="album.html">página</a>.</div>';
+          }else ALERTA.innerHTML = '<div class="alert alert-warning" role="alert">El álbum <strong>' + listaOpc.value + '</strong> no se ha podido eliminar.</div>';
+        }
       }
     </script>
   </body>

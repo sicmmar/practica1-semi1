@@ -147,9 +147,12 @@
                           <select class="form-control" id="album-chooser">
                           </select>
                         </div>
+                        <div class="form-group">
+                          <div id="ALERT-SUB"></div>
+                        </div>
                       </div>
                       <div class="card-footer">
-                        <button class="btn btn-sm btn-success" type="submit"> Subir</button>
+                        <button class="btn btn-sm btn-success" type="submit" onclick="nuevaFoto()"> Subir</button>
                         <button class="btn btn-sm btn-danger" type="reset" onclick="location.href='fotos.html'"> Cancelar</button>
                       </div>
                     </div>
@@ -175,7 +178,7 @@
     <!-- Plugins and scripts required by this view-->
     <script src="node_modules/@coreui/chartjs/dist/js/coreui-chartjs.bundle.js"></script>
     <script src="node_modules/@coreui/utils/dist/coreui-utils.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/clientAPI.js"></script>
     <script>
       function subirImg(){
         var imgInput = document.getElementById('photo-edit');
@@ -193,17 +196,54 @@
 
         var arr = imgInput.value.split("C:\\fakepath\\")[1].split('.');
         document.getElementById('name-photo').value = arr[0];
-        document.getElementById('ext-img').innerHTML = '<span class="input-group-text">' + arr[1] + '</span>';
+        document.getElementById('ext-img').innerHTML = '<span id="EXT" class="input-group-text">' + arr[1] + '</span>';
 
       }
 
-      function verToken(){
+      const verToken = async () => {
         const pass = sessionStorage.getItem('contrasena');
           if (pass == null){
             window.location = 'index.html';
           }else{
+            var listaHTML = ''
             document.getElementById('img-perfil').src = sessionStorage.getItem('foto_perfil');
+            const listaAlbum = await connectAPI(JSON.stringify({'username': sessionStorage.getItem('username'), 'contrasena':sessionStorage.getItem('contrasena')}), 'ingresar')
+            listaAlbum['Item']['album']['L'].forEach(element => {
+              if (element['L'][0]['S'] != 'Perfil'){
+                listaHTML += '<option>' + element['L'][0]['S'] + '</option>';
+              }
+            });
+
+            document.getElementById('album-chooser').innerHTML = listaHTML;
           }
+      }
+
+      const nuevaFoto = async () => {
+        var img = document.getElementById('prev-img');
+        var nombre_foto = document.getElementById('name-photo');
+        var imgInput = document.getElementById('photo-edit');
+        var ALERTA = document.getElementById('ALERT-SUB');
+
+        if(img.src != '' && nombre_foto.value != ''){
+          ALERTA.innerHTML = "";
+          var datos = JSON.stringify({
+            "username": sessionStorage.getItem('username'),
+            "nFoto":nombre_foto.value,
+            "ext":imgInput.value.split("C:\\fakepath\\")[1].split('.')[1],
+            "album":document.getElementById('album-chooser').value,
+            "b64":img.src
+          });
+
+          const respuesta = await connectAPI(datos, 'nuevaFoto');
+          if (respuesta['status'] == 202 && respuesta['existe'] != null){
+            ALERTA.innerHTML = '<div class="alert alert-success" role="alert">Foto <strong>' + nombre_foto.value + '</strong> cargada.</div>';
+            img.src = "";
+            document.getElementById('ext-img').innerHTML = '';
+            nombre_foto.value = ""
+          }else ALERTA.innerHTML = '<div class="alert alert-warning" role="alert">Error al cargar <strong>' + nombre_foto.value + '</strong></div>';
+        }else{
+          ALERTA.innerHTML = '<div class="alert alert-danger" role="alert">Ingrese la foto a cargar.</div>';
+        }
       }
     </script>
   </body>

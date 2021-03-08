@@ -242,7 +242,7 @@
                     "b64": imagen.src
                   });
 
-                  const respuesta = await registro(data);
+                  const respuesta = await connectAPI(data, 'registrar');
                   var existe = respuesta['existe'];
                   var status = respuesta['status'];
                   if (existe == 'true'){

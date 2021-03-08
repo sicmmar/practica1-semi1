@@ -123,7 +123,7 @@
             "contrasena": contrasena
           });
 
-          const respuesta = await ingresoURL(data);
+          const respuesta = await connectAPI(data, 'ingresar');
           if (respuesta['status'] == 202){
             var sesion = respuesta['Item'];
             if (sesion == ''){
