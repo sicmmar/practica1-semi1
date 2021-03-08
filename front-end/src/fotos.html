@@ -52,7 +52,7 @@
     </script>
     <link href="node_modules/@coreui/chartjs/dist/css/coreui-chartjs.css" rel="stylesheet">
   </head>
-  <body class="c-app" onload="cargarFotos()">
+  <body class="c-app" onload="verToken()">
     <div class="c-sidebar c-sidebar-dark c-sidebar-fixed c-sidebar-lg-show" id="sidebar">
       <ul class="c-sidebar-nav">
         <li class="c-sidebar-nav-title">Perfil</li>
@@ -195,6 +195,15 @@
         document.getElementById('name-photo').value = arr[0];
         document.getElementById('ext-img').innerHTML = '<span class="input-group-text">' + arr[1] + '</span>';
 
+      }
+
+      function verToken(){
+        const pass = sessionStorage.getItem('contrasena');
+          if (pass == null){
+            window.location = 'index.html';
+          }else{
+            document.getElementById('img-perfil').src = sessionStorage.getItem('foto_perfil');
+          }
       }
     </script>
   </body>
