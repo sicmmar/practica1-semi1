@@ -59,6 +59,11 @@ Se crearon usuarios por cada uno de los servicios de AWS utilizados en la arquit
 
     Vista desde consola de usuario ```dynamo-sicmmar``` 
 
+* ### Balanceador de Carga
+    Balanceador de Carga configurado en el usuario ```ec2-sicmmar```  con las dos instancias de EC2
+
+    ![](docs/img/load.png)
+
 ## Capturas de Pantalla de Elementos para Ugram
 * ### Buckets de S3 
     Bucket ``` practica1-g45-imagenes ```, este contiene dos carpetas (```fotos_perfil``` y ```fotos_publicadas```) en las cuáles se almacenan todas las imágenes a almacenar en Ugram.
@@ -70,6 +75,15 @@ Se crearon usuarios por cada uno de los servicios de AWS utilizados en la arquit
     ![](docs/img/s3-b2.png)
 
 * ### EC2
+    Máquina Virtual con Ubuntu para servidor de Node JS con IP privada de ```172.31.7.37```
+
+    ![](docs/img/node2.png)
+    ![](docs/img/node1.png)
+
+    Máquina Virtual con Ubuntu para servidor de Python con IP privada de ```172.31.26.177```
+
+    ![](docs/img/python2.png)
+    ![](docs/img/python1.png)
 * ### Tablas de DynamoDB
     Para el almacenamiento de los datos de Ugram, se utilizó una tabla llamada ```usuario```, la cual cada registro en ella contiene la siguiente estructua
 
@@ -82,11 +96,13 @@ Se crearon usuarios por cada uno de los servicios de AWS utilizados en la arquit
         "contrasena":"contrasenaenMD5",
         "album": [
             [
-                "nombre_album":"Perfil",
-                [
-                    Lista de Fotos
-                    ...
-                ]
+                {
+                    "nombre_album":"Perfil",
+                    [
+                        Lista de Fotos
+                        ...
+                    ]
+                }
             ],
             
             Lista de Albumes
