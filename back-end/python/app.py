@@ -1,4 +1,4 @@
-from credenciales import credenciales
+#from credenciales import credenciales
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from io import BytesIO
@@ -20,6 +20,18 @@ s3 = boto3.client('s3',
         aws_access_key_id=credenciales.s3['accessKeyId'],
         aws_secret_access_key=credenciales.s3['secretAccessKey']
     )
+
+rek = boto3.client('rekognition',
+        region_name=credenciales.rekognition['region'],
+        aws_access_key_id=credenciales.rekognition['accessKeyId'],
+        aws_secret_access_key=credenciales.rekognition['secretAccessKey']
+    )
+
+translate = boto3.client('translate',
+        region_name=credenciales.translate['region'],
+        aws_access_key_id=credenciales.translate['accessKeyId'],
+        aws_secret_access_key=credenciales.translate['secretAccessKey']
+)
 
 BUCKET_NAME='practica1-g45-imagenes'
 
@@ -275,6 +287,103 @@ def usuarioExistente(usernam):
     )
 
     return existe.get('Item')
+
+
+#Analisis facial
+@app.route('/detectarcara', methods=['POST'])
+def detectarcara():
+    imagen = request.json.get('imagen')
+    nombre = imagen.split(".com/")
+    print(nombre[1])
+
+    response = rek.detect_faces(Image={'Bytes':base64.b64decode(imagen)},Attributes=['ALL'])
+    #response = rek.detect_faces(Image={'S3Object':{'Bucket':BUCKET_NAME, 'Name': nombre[1]}},Attributes=['ALL'])
+    
+    return jsonify({'status': 202,'existe': response})
+
+
+#Detectar Labels
+@app.route('/detectarlabels', methods=['POST'])
+def detectarlabels():
+    imagen = request.json.get('imagen')
+    nombre = imagen.split(".com/")
+
+    respuesta = rek.detect_labels(Image={'Bytes':base64.b64decode(imagen)},MaxLabels=10)
+    #respuesta = rek.detect_labels(Image={'S3Object':{'Bucket':BUCKET_NAME, 'Name': nombre[1]}},MaxLabels=10)
+    etiquetasDetectadas=[]
+    for label in respuesta['Labels']:
+        etiquetasDetectadas.append(label['Name'])
+        print ("Label: " + label['Name'])
+
+    print(etiquetasDetectadas)
+    return jsonify({'status': 202,'existe': respuesta})
+
+#Comparacion de foto de perfil en Login
+@app.route('/compararfotos', methods=['POST'])
+def compararfotos():
+    imagen = request.json.get('foto_perfil') #Foto almacenada para usarse en perfil
+    imagenOriginal = imagen.split(".com/")
+    imagen2 = request.json.get('foto_login') #Foto nueva solo para ingresar.
+    imagenAcceso = imagen.split(".com/")
+    #Comparar de BucketS3 a BucketS3->
+    #respuesta = rek.compare_faces(SourceImage={'S3Object':{'Bucket':BUCKET_NAME,'Name': imagenOriginal[1]}}, TargetImage={'S3Object':{'Bucket':BUCKET_NAME,'Name': imagenAcceso[1]}},SimilarityThreshold=80)
+    #Comparar de BucketS3 a ImagenB64
+    respuesta = rek.compare_faces(SourceImage={'S3Object':{'Bucket':BUCKET_NAME,'Name': imagenOriginal[1]}}, TargetImage={'Bytes':base64.b64decode(imagen2)},SimilarityThreshold=80)
+    return jsonify({'status': 202,'existe': respuesta})
+
+#Extraer texto
+@app.route('/detectartexto', methods=['POST'])
+def detectartexto():
+    imagen = request.json.get('imagen')
+    nombre = imagen.split(".com/")
+
+    response = rek.detect_text(Image={'Bytes':base64.b64decode(imagen)})
+    textoFinalDetectado=[]
+    textDetections=response['TextDetections']
+    for text in textDetections:
+        textoFinalDetectado.append(text['DetectedText'])
+        print()
+    #response = rek.detect_faces(Image={'S3Object':{'Bucket':BUCKET_NAME, 'Name': nombre[1]}})
+    
+    print(textoFinalDetectado)
+    return jsonify({'status': 202,'existe': response})
+
+
+#TRADUCIR TEXTO
+#A Ingles:
+@app.route('/traduciringles', methods=['POST'])
+def traduciringles():
+    texto = request.json.get('text')
+
+    response = translate.translate_text(Text=texto,SourceLanguageCode='es',TargetLanguageCode='en')
+    respuestaTraducida = response['TranslatedText']
+    print(respuestaTraducida)
+
+    return jsonify({'status': 202,'existe': response})
+
+
+#A Portugues:
+@app.route('/traducirportugues', methods=['POST'])
+def traducirportugues():
+    texto = request.json.get('text')
+
+    response = translate.translate_text(Text=texto,SourceLanguageCode='es',TargetLanguageCode='pt')
+    respuestaTraducida = response['TranslatedText']
+    print(respuestaTraducida)
+    
+    return jsonify({'status': 202,'existe': response})
+
+
+#A Ruso:
+@app.route('/traducirruso', methods=['POST'])
+def traducirruso():
+    texto = request.json.get('text')
+
+    response = translate.translate_text(Text=texto,SourceLanguageCode='es',TargetLanguageCode='ru')
+    respuestaTraducida = response['TranslatedText']
+    print(respuestaTraducida)
+    
+    return jsonify({'status': 202,'existe': response})
 
 if __name__ == '__main__':
     app.run(port=7050)
