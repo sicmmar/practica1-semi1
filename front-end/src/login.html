@@ -131,6 +131,35 @@
                         <div class="card-body text-center">
                           <img id="imagenPerfil" width="85%" height="100%"/>
                         </div>
+                        <div class="card-footer">
+                          <div class="row align-items-center">
+                            <div class="col-6 col-sm-4 col-md-4 col-xl mb-3 mb-xl-0">
+                              <button id="tag1" class="btn btn-pill btn-block btn-success"></button>
+                            </div>
+                            <div class="col-6 col-sm-4 col-md-4 col-xl mb-3 mb-xl-0">
+                              <button id="tag2" class="btn btn-pill btn-block btn-light"></button>
+                            </div>
+                          </div>
+                          <div class="row align-items-center mt-3">
+                            <div class="col-6 col-sm-4 col-md-4 col-xl mb-3 mb-xl-0">
+                              <button id="tag3" class="btn btn-pill btn-block btn-info"></button>
+                            </div>
+                            <div class="col-6 col-sm-4 col-md-4 col-xl mb-3 mb-xl-0">
+                              <button id="tag4" class="btn btn-pill btn-block btn-danger"></button>
+                            </div>
+                            <div class="col-6 col-sm-4 col-md-4 col-xl mb-3 mb-xl-0">
+                              <button id="tag5" class="btn btn-pill btn-block btn-warning"></button>
+                            </div>
+                          </div>
+                          <div class="row align-items-center mt-3">
+                            <div class="col-6 col-sm-4 col-md-4 col-xl mb-3 mb-xl-0">
+                              <button id="tag6" class="btn btn-pill btn-block btn-dark"></button>
+                            </div>
+                            <div class="col-6 col-sm-4 col-md-4 col-xl mb-3 mb-xl-0">
+                              <button id="tag7" class="btn btn-pill btn-block btn-primary"></button>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <!-- /.col-->
@@ -209,6 +238,7 @@
     <script src="node_modules/@coreui/icons/js/svgxuse.min.js"></script>
     <!--<![endif]-->
     <!-- Plugins and scripts required by this view-->
+    <script src="js/popovers.js"></script>
     <script src="node_modules/@coreui/chartjs/dist/js/coreui-chartjs.bundle.js"></script>
     <script src="node_modules/@coreui/utils/dist/coreui-utils.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/core.js"></script>
@@ -252,6 +282,11 @@
             nombre.value = sessionStorage.getItem('nombre');
             username.value = sessionStorage.getItem('username');
             img.src = sessionStorage.getItem('foto_perfil');
+
+            for(x = 1; x <= 7; x++){
+              var tag = 'tag' + x.toString();
+              document.getElementById(tag).textContent = sessionStorage.getItem(tag);
+            }
 
           }
       }

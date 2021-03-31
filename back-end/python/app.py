@@ -123,6 +123,19 @@ def registrar():
         ExtraArgs={'ACL': 'public-read'}
     )
     #res = s3.upload_file("foto","practica2-g45-imagenes",foto)
+
+    respuesta = rek.detect_labels(
+        Image={
+            'S3Object':{
+                    'Bucket':BUCKET_NAME,'Name': ubicacion
+                }
+            },
+        MaxLabels=7)
+    
+    etiq = []
+    for x in respuesta['Labels']:
+        response = translate.translate_text(Text=x['Name'],SourceLanguageCode='en',TargetLanguageCode='es')
+        etiq.append({'S':response['TranslatedText']})
     
     dynamo.put_item(
         TableName='usuario',
@@ -132,6 +145,7 @@ def registrar():
             'contrasena': {'S': passw},
             'nFoto' : {'S': nFoto + '-' + uniqueID + '.' + ext},
             'foto_perfil': {'S': "https://practica2-g45-imagenes.s3.us-east-2.amazonaws.com/" + ubicacion},
+            'etiquetas': {'L': etiq},
             'album':{'L':[{'L': [{'S':'Perfil'},{'L':[{'S': "https://practica2-g45-imagenes.s3.us-east-2.amazonaws.com/" + ubicacion}]}]}]}       
         }
     )

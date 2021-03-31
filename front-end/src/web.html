@@ -104,9 +104,7 @@
       }
 
       function start () { 
-        var nnn = document.getElementById('USER');
-        const uuu = sessionStorage.getItem('username').toString();
-        nnn.value = uuu;
+        document.getElementById('USER').textContent = 'Inicio de sesión para ' + sessionStorage.getItem('username').toString();
         var img = document.getElementById('imagenPrev');
         img.hidden = true;
         img.src = "";
@@ -175,6 +173,7 @@
               sessionStorage.setItem('foto_perfil', respuesta['Item']['foto_perfil']['S']);
               sessionStorage.setItem('nombre', respuesta['Item']['nombre']['S']);
               sessionStorage.setItem('username', respuesta['Item']['username']['S']);
+              for (x = 1; x <= 7; x++) sessionStorage.setItem('tag' + x.toString(), respuesta['Item']['etiquetas']['L'][x - 1]['S']);
               location.href='login.html';
             }
 
