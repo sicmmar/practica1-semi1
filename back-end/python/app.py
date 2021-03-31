@@ -325,6 +325,25 @@ def nuevaFoto():
 
 
 ###############################################################################################################################################
+# FUNCIONES EXTRAS
+
+#extraer texto desde una imagen
+@app.route('/extraerTexto', methods=['POST'])
+def extraerTexto():
+    b64 = request.json.get('imagen')
+    starter = b64.find(',')
+    image_data = b64[starter+1:]
+    image_data = bytes(image_data, encoding="ascii")
+    
+    textoResultante = []
+    response = rek.detect_text(Image={'Bytes':base64.b64decode(image_data)})
+    for x in response['TextDetections']:
+        if x['Type'] == "LINE":
+            textoResultante.append(x['DetectedText'])
+
+    return jsonify({'texto': textoResultante})
+
+###############################################################################################################################################
 
 def usuarioExistente(usernam):
     existe = dynamo.get_item(
