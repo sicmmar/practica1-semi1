@@ -1,4 +1,4 @@
-#from credenciales import credenciales
+from credenciales import credenciales
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from io import BytesIO
@@ -33,7 +33,7 @@ translate = boto3.client('translate',
         aws_secret_access_key=credenciales.translate['secretAccessKey']
 )
 
-BUCKET_NAME='practica1-g45-imagenes'
+BUCKET_NAME='practica2-g45-imagenes'
 
 @app.route('/')
 def result():
@@ -57,6 +57,40 @@ def ingresar():
             return jsonify({'status': 202,'Item':item})
         
         return jsonify({'status': 202,'Item':''})
+
+    return jsonify({'status': 303,'Item': ""})
+
+#Comparacion de foto de perfil en Login
+@app.route('/ingresarWeb', methods=['POST'])
+def ingresarWeb():
+    usern = request.json.get('username')
+    imagen2 = request.json.get('foto') #Foto nueva solo para ingresar.
+    starter = imagen2.find(',')
+    image_data = imagen2[starter+1:]
+    image_data = bytes(image_data, encoding="ascii")
+
+    if not usern:
+        return jsonify({'status': 404,'Item': ''})
+
+    item = usuarioExistente(usern)
+    if item:
+        respuesta = rek.compare_faces(
+            SourceImage={
+                'S3Object':{
+                    'Bucket':BUCKET_NAME,'Name': 'fotos_perfil/' + item['nFoto']['S']
+                    }
+                }, 
+            TargetImage={
+                'Bytes':base64.b64decode(image_data)
+                },
+            SimilarityThreshold=81)
+
+        if respuesta['FaceMatches'] == []:
+            return jsonify({'status': 202,'Item':''})
+        else:
+            if respuesta['FaceMatches'][0]['Similarity'] >= 85:
+                return jsonify({'status': 202,'Item': item})
+            else: return jsonify({'status': 202,'Item': ''})
 
     return jsonify({'status': 303,'Item': ""})
 
@@ -88,7 +122,7 @@ def registrar():
         ubicacion,
         ExtraArgs={'ACL': 'public-read'}
     )
-    #res = s3.upload_file("foto","practica1-g45-imagenes",foto)
+    #res = s3.upload_file("foto","practica2-g45-imagenes",foto)
     
     dynamo.put_item(
         TableName='usuario',
@@ -96,9 +130,9 @@ def registrar():
             'username': {'S': usern},
             'nombre': {'S': nombre},
             'contrasena': {'S': passw},
-            'nFoto' : {'S': nFoto + '.' + ext},
-            'foto_perfil': {'S': "https://practica1-g45-imagenes.s3.us-east-2.amazonaws.com/" + ubicacion},
-            'album':{'L':[{'L': [{'S':'Perfil'},{'L':[{'S': "https://practica1-g45-imagenes.s3.us-east-2.amazonaws.com/" + ubicacion}]}]}]}       
+            'nFoto' : {'S': nFoto + '-' + uniqueID + '.' + ext},
+            'foto_perfil': {'S': "https://practica2-g45-imagenes.s3.us-east-2.amazonaws.com/" + ubicacion},
+            'album':{'L':[{'L': [{'S':'Perfil'},{'L':[{'S': "https://practica2-g45-imagenes.s3.us-east-2.amazonaws.com/" + ubicacion}]}]}]}       
         }
     )
 
@@ -130,7 +164,7 @@ def editarPerfil():
             for alb in album_perfil['L']:
                 #aca es cada album
                 if alb['L'][0]['S'] == 'Perfil':
-                    alb['L'][1]['L'].append({'S': "https://practica1-g45-imagenes.s3.us-east-2.amazonaws.com/" + ubicacion})
+                    alb['L'][1]['L'].append({'S': "https://practica2-g45-imagenes.s3.us-east-2.amazonaws.com/" + ubicacion})
                     break
 
             s3.upload_fileobj(
@@ -149,7 +183,7 @@ def editarPerfil():
                 ExpressionAttributeValues = {
                     ':n': {'S': nombre},
                     ':nf': {'S': nFoto + '.' + ext},
-                    ':fp': {'S': "https://practica1-g45-imagenes.s3.us-east-2.amazonaws.com/" + ubicacion},
+                    ':fp': {'S': "https://practica2-g45-imagenes.s3.us-east-2.amazonaws.com/" + ubicacion},
                     ':prof':album_perfil
                 }
             )
@@ -257,7 +291,7 @@ def nuevaFoto():
         albumes = usuarioExistente(usern)['album']
         for x in range(0,len(albumes['L'])):
             if albumes['L'][x]['L'][0]['S'] == nombre_album:
-                albumes['L'][x]['L'][1]['L'].append({'S': "https://practica1-g45-imagenes.s3.us-east-2.amazonaws.com/" + ubicacion})
+                albumes['L'][x]['L'][1]['L'].append({'S': "https://practica2-g45-imagenes.s3.us-east-2.amazonaws.com/" + ubicacion})
                 break
                 
         dynamo.update_item(

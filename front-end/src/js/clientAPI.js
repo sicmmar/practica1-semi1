@@ -1,4 +1,4 @@
-const URL = "balancer-g45-289319910.us-east-2.elb.amazonaws.com:7050";
+const URL = "localhost:7050";
 
 const connectAPI = async (cuerpo, endpoint) => {
     const response = await fetch("http://" + URL + "/" + endpoint, {

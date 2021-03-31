@@ -76,9 +76,13 @@
                 </div>
                 <div id="ALERT-LOGIN" class="input-group mb-4">
                 </div>
+                <p class="text-muted">Entrar</p>
                 <div class="row">
                   <div class="col-6">
-                    <button class="btn btn-primary px-4" type="button" onclick="ingreso()">Ingresar</button>
+                    <button class="btn btn-primary px-4" type="button" onclick="ingreso(0)">Ingresar</button>
+                  </div>
+                  <div class="col-6">
+                    <button class="btn btn-outline-primary px-4" type="button" onclick="ingreso(1)">Con Cámara</button>
                   </div>
                 </div>
               </div>
@@ -109,38 +113,51 @@
         sessionStorage.clear();
       }
 
-      const ingreso = async () => {
+      const ingreso = async (opcion) => {
         var username = document.getElementById('in-user');
         var pass = document.getElementById('in-pass');
         var alarma = document.getElementById('ALERT-LOGIN');
         var contrasena = CryptoJS.MD5(pass.value).toString();
 
-        if (username.value == "" || pass.value == ""){
-          alarma.innerHTML = '<div class="alert alert-danger" role="alert">Debe proveer un usuario/contraseña</div>';
+        if (username.value == ""){
+          alarma.innerHTML = '<div class="alert alert-danger" role="alert">Debe proveer un usuario</div>';
         }else{
-          data = JSON.stringify({
-            "username": username.value,
-            "contrasena": contrasena
-          });
+          let respuesta;
+          if (opcion == 0){
+            // ingresar con credenciales
+            if (pass.value == "") alarma.innerHTML = '<div class="alert alert-danger" role="alert">Debe proveer una contraseña</div>';
+            else{
+              data = JSON.stringify({
+                "username": username.value,
+                "contrasena": contrasena
+              });
 
-          const respuesta = await connectAPI(data, 'ingresar');
-          if (respuesta['status'] == 202){
-            var sesion = respuesta['Item'];
-            if (sesion == ''){
-              alarma.innerHTML = '<div class="alert alert-warning" role="alert">Credenciales incorrectas para <strong>' + username.value + '</strong></div>';
-            }else{
-              alarma.innerHTML = '<div class="alert alert-success" role="alert">Bienvenido/a <strong>' + username.value + '</strong></div>';
-              sessionStorage.setItem('contrasena', respuesta['Item']['contrasena']['S']);
-              sessionStorage.setItem('foto_perfil', respuesta['Item']['foto_perfil']['S']);
-              sessionStorage.setItem('nombre', respuesta['Item']['nombre']['S']);
-              sessionStorage.setItem('username', respuesta['Item']['username']['S']);
-              location.href='login.html';
+              respuesta = await connectAPI(data, 'ingresar');
+
+
+              if (respuesta['status'] == 202){
+                var sesion = respuesta['Item'];
+                if (sesion == ''){
+                  alarma.innerHTML = '<div class="alert alert-warning" role="alert">Credenciales incorrectas para <strong>' + username.value + '</strong></div>';
+                }else{
+                  alarma.innerHTML = '<div class="alert alert-success" role="alert">Bienvenido/a <strong>' + username.value + '</strong></div>';
+                  sessionStorage.setItem('contrasena', respuesta['Item']['contrasena']['S']);
+                  sessionStorage.setItem('foto_perfil', respuesta['Item']['foto_perfil']['S']);
+                  sessionStorage.setItem('nombre', respuesta['Item']['nombre']['S']);
+                  sessionStorage.setItem('username', respuesta['Item']['username']['S']);
+                  location.href='login.html';
+                }
+
+              }else if (respuesta['status'] == 303){
+                alarma.innerHTML = '<div class="alert alert-warning" role="alert">El usuario <strong>' + username.value + '</strong> no existe.</div>';
+              }else{
+                alarma.innerHTML = '<div class="alert alert-danger" role="alert">Ingreso para ' + username.value + ' incorrecto!</div>';
+              }
             }
-
-          }else if (respuesta['status'] == 303){
-            alarma.innerHTML = '<div class="alert alert-warning" role="alert">El usuario <strong>' + username.value + '</strong> no existe.</div>';
-          }else{
-            alarma.innerHTML = '<div class="alert alert-danger" role="alert">Debe proveer un usuario/contraseña</div>';
+          }else if(opcion == 1){
+            //ingresar con camara web
+            sessionStorage.setItem('username', username.value)
+            location.href = "web.html"
           }
           
           pass.value = "";
