@@ -281,11 +281,11 @@ def nuevaFoto():
     usern = request.json.get('username')
     nombre_foto = request.json.get('nFoto')
     extension = request.json.get('ext')
-    nombre_album = request.json.get('album')
     b64 = request.json.get('b64')
     uniqueID = str(uuid.uuid1().time_low)
+    descr = request.json.get('descripcion')
 
-    if not usern or not nombre_album:
+    if not usern:
         return jsonify({'status': 504,'existe': ''})
 
     item = usuarioExistente(usern)
@@ -302,11 +302,34 @@ def nuevaFoto():
             ExtraArgs={'ACL': 'public-read'}
         )
 
+        respuesta = rek.detect_labels(
+            Image={
+                'S3Object':{
+                        'Bucket':BUCKET_NAME,'Name': ubicacion
+                    }
+                },
+            MaxLabels=3)
+        
+        etiq = []
+        for x in respuesta['Labels']:
+            response = translate.translate_text(Text=x['Name'],SourceLanguageCode='en',TargetLanguageCode='es')
+            etiq.append(response['TranslatedText'])
+
+
         albumes = usuarioExistente(usern)['album']
-        for x in range(0,len(albumes['L'])):
-            if albumes['L'][x]['L'][0]['S'] == nombre_album:
-                albumes['L'][x]['L'][1]['L'].append({'S': "https://practica2-g45-imagenes.s3.us-east-2.amazonaws.com/" + ubicacion})
-                break
+        
+        for label in etiq:
+            existe = False
+            x = 0
+            while not existe and x < len(albumes['L']):
+                if albumes['L'][x]['L'][0]['S'] == label:
+                    existe = True
+                    albumes['L'][x]['L'][1]['L'].append({'L':[{'S':nombre_foto},{'S': descr},{'S': "https://practica2-g45-imagenes.s3.us-east-2.amazonaws.com/" + ubicacion}]})
+                x+=1
+            
+            if not existe:
+                albumes['L'].append({'L': [{'S':label},{'L':[{'L':[{'S':nombre_foto},{'S': descr},{'S': "https://practica2-g45-imagenes.s3.us-east-2.amazonaws.com/" + ubicacion}]}]}]})
+
                 
         dynamo.update_item(
             TableName='usuario',
@@ -342,6 +365,16 @@ def extraerTexto():
             textoResultante.append(x['DetectedText'])
 
     return jsonify({'texto': textoResultante})
+
+#traduccion de cualquier idioma a ingles, portugues o ruso
+@app.route('/traducir', methods=['POST'])
+def traducir():
+    idioma_destino = request.json.get('destino')
+    texto = request.json.get('texto')
+
+    response = translate.translate_text(Text=texto,SourceLanguageCode='auto',TargetLanguageCode=idioma_destino)
+
+    return jsonify({'texto':response['TranslatedText']})
 
 ###############################################################################################################################################
 
@@ -422,7 +455,7 @@ def detectartexto():
 def traduciringles():
     texto = request.json.get('text')
 
-    response = translate.translate_text(Text=texto,SourceLanguageCode='es',TargetLanguageCode='en')
+    response = translate.translate_text(Text=texto,SourceLanguageCode='auto',TargetLanguageCode='en')
     respuestaTraducida = response['TranslatedText']
     print(respuestaTraducida)
 
@@ -434,7 +467,7 @@ def traduciringles():
 def traducirportugues():
     texto = request.json.get('text')
 
-    response = translate.translate_text(Text=texto,SourceLanguageCode='es',TargetLanguageCode='pt')
+    response = translate.translate_text(Text=texto,SourceLanguageCode='auto',TargetLanguageCode='pt')
     respuestaTraducida = response['TranslatedText']
     print(respuestaTraducida)
     

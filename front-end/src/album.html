@@ -109,20 +109,33 @@
         <main class="c-main">
           <div class="container-fluid">
             <div class="fade-in">
+              <div id="ALBUMES"></div>
               <div class="row">
                 <div class="col-lg-6">
                   <div class="card">
-                    <div class="card-header">Nuevo Álbum</div>
+                    <div class="card-header">Traducción de Texto</div>
                     <div class="card-body">
                       <div class="row">
-                        <div class="col-md-8">
+                        <div class="col-md-7">
                           <div class="form-group">
-                            <input class="form-control" id="name-album" type="text" placeholder="Nombre Álbum">
+                            <label for="ccmonth">Texto de Origen</label>
+                            <textarea class="form-control" id="txt-orig" type="text" rows="3" placeholder="Origen ..."></textarea>
+                          </div>
+                          <div class="form-group">
+                            <label for="ccmonth">Texto Traducido</label>
+                            <textarea class="form-control" id="txt-dest" type="text" rows="3" placeholder="Destino ..."></textarea>
                           </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                           <div class="form-group">
-                            <button class="btn btn-success" type="button" onclick="crearAlbum()">Crear</button>
+                            <label for="ccmonth">Volver a traducir</label>
+                            <button class="btn btn-danger" type="button" onclick="traducir('en', 'TXT')">Inglés</button>
+                          </div>
+                          <div class="form-group">
+                            <button class="btn btn-success" type="button" onclick="traducir('pt', 'TXT')">Portugués</button>
+                          </div>
+                          <div class="form-group">
+                            <button class="btn btn-primary" type="button" onclick="traducir('ru', 'TXT')">Ruso</button>
                           </div>
                         </div>
                       </div>
@@ -130,28 +143,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-lg-6">
-                  <div class="card">
-                    <div class="card-header">Eliminar Álbum</div>
-                    <div class="card-body">
-                      <div class="row">
-                        <div class="col-md-8">
-                          <div class="form-group">
-                            <select class="form-control" id="album-chooser"></select>
-                          </div>
-                        </div>
-                        <div class="col-md-2">
-                          <div class="form-group">
-                            <button class="btn btn-danger" type="button" onclick="eliminarAlbum()">Eliminar</button>
-                          </div>
-                        </div>
-                      </div>
-                      <div id="ALERT-DEL"></div>
-                    </div>
-                  </div>
-                </div>
               </div>
-              <div id="ALBUMES"></div>
             </div>
           </div>
         </main>
@@ -175,14 +167,13 @@
           if (pass == null){
             window.location = 'index.html';
           }else{
-            var listaHTML = ''
             document.getElementById('ALERT-NEW').innerHTML = ''
             var cartaAlbum = ''
             document.getElementById('img-perfil').src = sessionStorage.getItem('foto_perfil');
             const listaAlbum = await connectAPI(JSON.stringify({'username': sessionStorage.getItem('username'), 'contrasena':sessionStorage.getItem('contrasena')}), 'ingresar')
             listaAlbum['Item']['album']['L'].forEach(element => {
-              if (element['L'][0]['S'] != 'Perfil') listaHTML += '<option>' + element['L'][0]['S'] + '</option>';
-              // ---------------------------- PARA MOSTRAR LOS ALBUMES -----------------------------------//
+            if (element['L'][0]['S'] == 'Perfil'){
+              // ---------------------------- PARA MOSTRAR EL ALBUM DE PERFIL -----------------------------------//
               cartaAlbum += '<div class="card"><div class="card-body"><div class="d-flex justify-content-between"><div><h4 class="card-title mb-0">';
               cartaAlbum += element['L'][0]['S'] + '</h4></div></div><div class="row">'
               element['L'][1]['L'].forEach(fotico =>{
@@ -190,10 +181,24 @@
                 cartaAlbum += fotico['S'] + '"/></div></div></div>';
               });
               cartaAlbum += '</div></div></div>'
-            });
+            }else{
+              // ---------------------------- PARA MOSTRAR LOS ALBUMES -----------------------------------//
+              cartaAlbum += '<div class="card"><div class="card-body"><div class="d-flex justify-content-between"><div><h4 class="card-title mb-0">';
+              cartaAlbum += element['L'][0]['S'] + '</h4></div></div><div class="row">'
+              element['L'][1]['L'].forEach(fotico =>{
+                cartaAlbum += '<div class="col-sm-6 col-lg-3"><div class="card text-center"><div class="card-header"><h5 class="card-title mb-0">' + fotico['L'][0]['S'];
+                cartaAlbum += '</h5></div><div class="card-body text-center"><img width="87%" height="100%" src="' + fotico['L'][2]['S'];
+                cartaAlbum += '"/></div><div class="card-footer"><p>' + fotico['L'][1]['S']
+                cartaAlbum += '</p><button class="btn btn-sm btn-danger" type="button" onclick="traducir(\'en\',\'' + fotico['L'][1]['S'];
+                cartaAlbum += '\')" >INGLÉS</button><button class="btn btn-sm btn-success" type="button" onclick="traducir(\'pt\',\'' + fotico['L'][1]['S'];
+                cartaAlbum += '\')">PORTUGUÉS</button><button class="btn btn-sm btn-primary" type="button" onclick="traducir(\'ru\',\'' + fotico['L'][1]['S'];
+                cartaAlbum += '\')">RUSO</button></div></div></div>';
+              });
+              cartaAlbum += '</div></div></div>'
+            }
+          });
 
-            document.getElementById('album-chooser').innerHTML = listaHTML;
-            document.getElementById('ALBUMES').innerHTML = cartaAlbum;
+          document.getElementById('ALBUMES').innerHTML = cartaAlbum;
 
           }
       }
@@ -224,6 +229,20 @@
             ALERTA.innerHTML = '<div class="alert alert-success" role="alert">El álbum <strong>' + listaOpc.value + '</strong> ha sido eliminado. Recarga la <a class="alert-link" href="album.html">página</a>.</div>';
           }else ALERTA.innerHTML = '<div class="alert alert-warning" role="alert">El álbum <strong>' + listaOpc.value + '</strong> no se ha podido eliminar.</div>';
         }
+      }
+
+      const traducir = async (target, texto) => {
+        window.scrollTo(0,document.body.scrollHeight);
+        var datos;
+        if (texto.toString() == 'TXT') datos = JSON.stringify({'destino':target, 'texto':document.getElementById('txt-orig').value})
+        else{
+          document.getElementById('txt-orig').value = texto;
+          datos = JSON.stringify({'destino':target, 'texto':texto})
+        }
+
+        const resp = await connectAPI(datos, 'traducir');
+        
+        document.getElementById('txt-dest').textContent = resp['texto'];
       }
     </script>
   </body>
