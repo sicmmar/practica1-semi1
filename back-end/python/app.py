@@ -2,7 +2,7 @@ from credenciales import credenciales
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from io import BytesIO
-import boto3
+import boto3,json
 import base64
 import uuid
 
@@ -31,9 +31,17 @@ translate = boto3.client('translate',
         region_name=credenciales.translate['region'],
         aws_access_key_id=credenciales.translate['accessKeyId'],
         aws_secret_access_key=credenciales.translate['secretAccessKey']
-)
+    )
+
+chat = boto3.client('lex-runtime',
+        region_name=credenciales.lex['region'],
+        aws_access_key_id=credenciales.lex['accessKeyId'],
+        aws_secret_access_key=credenciales.lex['secretAccessKey']
+    )
 
 BUCKET_NAME='practica2-g45-imagenes'
+BOT_NAME='UgramPro'
+BOT_ALIAS='ugrampro'
 
 @app.route('/')
 def result():
@@ -375,6 +383,51 @@ def traducir():
     response = translate.translate_text(Text=texto,SourceLanguageCode='auto',TargetLanguageCode=idioma_destino)
 
     return jsonify({'texto':response['TranslatedText']})
+
+###############################################################################################################################################
+# CHATBOT
+
+#iniciar una sesión con el chat
+@app.route('/iniciarChat', methods=['POST'])
+def inicioChat():
+    user = request.json.get('username')
+
+    response = chat.put_session(
+        botName=BOT_NAME,
+        botAlias=BOT_ALIAS,
+        userId=user,
+        accept='text/plain; charset=utf-8'
+    )
+
+    return jsonify(response['ResponseMetadata'])
+
+#finalizar chat
+@app.route('/finChat', methods=['POST'])
+def finChat():
+    user = request.json.get('username')
+
+    response = chat.delete_session(
+        botName=BOT_NAME,
+        botAlias=BOT_ALIAS,
+        userId=user
+    )
+
+    return jsonify(response['ResponseMetadata'])
+
+#conversar con el chat
+@app.route('/conversarChat', methods=['POST'])
+def conversarChat():
+    user = request.json.get('username')
+    mensaje = request.json.get('mensaje')
+
+    response = chat.post_text(
+        botName=BOT_NAME,
+        botAlias=BOT_ALIAS,
+        userId=user,
+        inputText=mensaje
+    )
+
+    return jsonify(response)
 
 ###############################################################################################################################################
 
