@@ -180,14 +180,15 @@
 
           const respuesta = await connectAPI(datos, 'iniciarChat');
 
-          document.getElementById('header-chat').innerHTML = 'Historial de conversación con ' + sessionStorage.getItem('username') + ' <b>' 
-            + fecha.getDay() + '/' + fecha.getMonth() + '/' + fecha.getFullYear() + '</b>'
+          document.getElementById('header-chat').innerHTML = 'Historial de conversación con ' + sessionStorage.getItem('nombre') + ' <b>' 
+            + new Date().toISOString().split('T')[0] + '</b>'
       }
 
       const enviarMensaje = async () => {
         var mensaje = document.getElementById('txt-enviar').value;
         var hist = document.getElementById('historial');
-        hist.innerHTML += '<div class="alert alert-info text-right" role="alert">' + mensaje + '</div>'
+        var today = new Date();
+        hist.innerHTML += '<div class="alert alert-info text-right" role="alert"><small><b>' + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds() + '&nbsp;&nbsp;&nbsp;&nbsp;</b></small>' + mensaje + '&nbsp;&nbsp;<div class="c-avatar"><img src="' + sessionStorage.getItem('foto_perfil') + '" class="c-avatar-img"></div></div>'
 
         var datos = JSON.stringify({
             "username": sessionStorage.getItem('username'),
@@ -196,7 +197,7 @@
 
         const respuesta = await connectAPI(datos, 'conversarChat');
 
-        hist.innerHTML += '<div class="alert alert-dark text-left" role="alert">' + respuesta['message'] + '</div>'
+        hist.innerHTML += '<div class="alert alert-dark text-left" role="alert"><div class="c-avatar"><img src="assets/img/avatars/bot.png" class="c-avatar-img"></div>&nbsp;&nbsp;' + respuesta['message'] + '<small><b>&nbsp;&nbsp;&nbsp;&nbsp;' + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds() + '</b></small></div>'
 
       }
 

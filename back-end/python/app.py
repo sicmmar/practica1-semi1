@@ -132,18 +132,23 @@ def registrar():
     )
     #res = s3.upload_file("foto","practica2-g45-imagenes",foto)
 
-    respuesta = rek.detect_labels(
-        Image={
+    response = rek.detect_faces(Image={
             'S3Object':{
                     'Bucket':BUCKET_NAME,'Name': ubicacion
                 }
-            },
-        MaxLabels=7)
-    
-    etiq = []
-    for x in respuesta['Labels']:
-        response = translate.translate_text(Text=x['Name'],SourceLanguageCode='en',TargetLanguageCode='es')
-        etiq.append({'S':response['TranslatedText']})
+            },Attributes=['ALL'])
+    #response = rek.detect_faces(Image={'S3Object':{'Bucket':BUCKET_NAME, 'Name': nombre[1]}},Attributes=['ALL'])
+    etiq = []   
+    for aspectos in response['FaceDetails']:
+        if aspectos['AgeRange']: etiq.append({'S':str(aspectos['AgeRange']['Low']) + "-" + str(aspectos['AgeRange']['High']) + " años"})
+        if aspectos['Beard']: etiq.append({'S':"Con Barba" if aspectos['Beard']['Value'] else "Sin Barba"})
+        if aspectos['Eyeglasses']: etiq.append({'S':'Usa Lentes' if aspectos['Eyeglasses']['Value'] else "No usa lentes"})
+        if aspectos['EyesOpen']: etiq.append({'S':"Ojos Abiertos" if aspectos['EyesOpen']['Value'] else "Ojos Cerrados"})
+        if aspectos['Gender']: etiq.append({'S':translate.translate_text(Text=aspectos['Gender']['Value'],SourceLanguageCode='en',TargetLanguageCode='es')['TranslatedText']})
+        if aspectos['Smile']: etiq.append({'S':"Sonriendo" if aspectos['Smile']['Value'] else "Sin Sonreír"})
+        if aspectos['Emotions']:
+            for emociones in aspectos['Emotions']:
+                if emociones['Confidence'] >= 60: etiq.append({'S':translate.translate_text(Text=emociones['Type'],SourceLanguageCode='en',TargetLanguageCode='es')['TranslatedText']})
     
     dynamo.put_item(
         TableName='usuario',
@@ -196,18 +201,23 @@ def editarPerfil():
                 ExtraArgs={'ACL': 'public-read'}
             )
 
-            respuesta = rek.detect_labels(
-                Image={
-                    'S3Object':{
-                            'Bucket':BUCKET_NAME,'Name': ubicacion
-                        }
-                    },
-                MaxLabels=7)
+            response = rek.detect_faces(Image={
+            'S3Object':{
+                    'Bucket':BUCKET_NAME,'Name': ubicacion
+                }
+            },Attributes=['ALL'])
             
-            etiq = []
-            for x in respuesta['Labels']:
-                response = translate.translate_text(Text=x['Name'],SourceLanguageCode='en',TargetLanguageCode='es')
-                etiq.append({'S':response['TranslatedText']})
+            etiq = []   
+            for aspectos in response['FaceDetails']:
+                if aspectos['AgeRange']: etiq.append({'S':str(aspectos['AgeRange']['Low']) + "-" + str(aspectos['AgeRange']['High']) + " años"})
+                if aspectos['Beard']: etiq.append({'S':"Con Barba" if aspectos['Beard']['Value'] else "Sin Barba"})
+                if aspectos['Eyeglasses']: etiq.append({'S':'Usa Lentes' if aspectos['Eyeglasses']['Value'] else "No usa lentes"})
+                if aspectos['EyesOpen']: etiq.append({'S':"Ojos Abiertos" if aspectos['EyesOpen']['Value'] else "Ojos Cerrados"})
+                if aspectos['Gender']: etiq.append({'S':translate.translate_text(Text=aspectos['Gender']['Value'],SourceLanguageCode='en',TargetLanguageCode='es')['TranslatedText']})
+                if aspectos['Smile']: etiq.append({'S':"Sonriendo" if aspectos['Smile']['Value'] else "Sin Sonreír"})
+                if aspectos['Emotions']:
+                    for emociones in aspectos['Emotions']:
+                        if emociones['Confidence'] >= 60: etiq.append({'S':translate.translate_text(Text=emociones['Type'],SourceLanguageCode='en',TargetLanguageCode='es')['TranslatedText']})
 
             dynamo.update_item(
                 TableName='usuario',
@@ -459,14 +469,29 @@ def usuarioExistente(usernam):
 #Analisis facial
 @app.route('/detectarcara', methods=['POST'])
 def detectarcara():
-    imagen = request.json.get('imagen')
-    nombre = imagen.split(".com/")
-    print(nombre[1])
 
-    response = rek.detect_faces(Image={'Bytes':base64.b64decode(imagen)},Attributes=['ALL'])
+    ubicacion = request.json.get('nFoto')
+
+    response = rek.detect_faces(Image={
+            'S3Object':{
+                    'Bucket':BUCKET_NAME,'Name': ubicacion
+                }
+            },Attributes=['ALL'])
     #response = rek.detect_faces(Image={'S3Object':{'Bucket':BUCKET_NAME, 'Name': nombre[1]}},Attributes=['ALL'])
-    
-    return jsonify({'status': 202,'existe': response})
+    etiq = []   
+    for aspectos in response['FaceDetails']:
+        if aspectos['AgeRange']: etiq.append({'S':str(aspectos['AgeRange']['Low']) + "-" + str(aspectos['AgeRange']['High']) + " años"})
+        if aspectos['Beard']: etiq.append({'S':"Con Barba" if aspectos['Beard']['Value'] else "Sin Barba"})
+        if aspectos['Eyeglasses']: etiq.append({'S':'Usa Lentes' if aspectos['Eyeglasses']['Value'] else "No usa lentes"})
+        if aspectos['EyesOpen']: etiq.append({'S':"Ojos Abiertos" if aspectos['EyesOpen']['Value'] else "Ojos Cerrados"})
+        if aspectos['Gender']: etiq.append({'S':translate.translate_text(Text=aspectos['Gender']['Value'],SourceLanguageCode='en',TargetLanguageCode='es')['TranslatedText']})
+        if aspectos['Smile']: etiq.append({'S':"Sonriendo" if aspectos['Smile']['Value'] else "Sin Sonreír"})
+        if aspectos['Emotions']:
+            for emociones in aspectos['Emotions']:
+                if emociones['Confidence'] >= 60: etiq.append({'S':translate.translate_text(Text=emociones['Type'],SourceLanguageCode='en',TargetLanguageCode='es')['TranslatedText']})
+    #etiq.append(aspectos['AgeRange']['Low'] + "-" + aspectos['AgeRange']['High'] + " años")
+    print(etiq)
+    return jsonify(response)
 
 
 #Detectar Labels
