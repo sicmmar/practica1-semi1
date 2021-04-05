@@ -259,11 +259,11 @@
                       <div class="form-group">
                         <label for="company">Actualiza tu foto de perfil</label>
                         <div class="col-md-9">
-                          <input id="photo-edit" onchange="cambPerfil()" type="file" accept="image/png, image/jpeg">
+                          <input id="editar-foto" onchange="cambPerfil()" type="file" accept="image/png, image/jpeg">
                         </div>
                       </div>
                       <div class="form-group">
-                        <img id="prev-p-img" width="85%" height="100%"/>
+                        <img id="prev-editar-foto" width="85%" height="100%"/>
                       </div>
                       <div class="form-group">
                         <label for="company">Confirma contraseña</label>
@@ -302,8 +302,8 @@
     <script src="js/clientAPI.js"></script>
     <script>
       function cambPerfil(){
-        var imgInput = document.getElementById('photo-edit');
-        var preview = document.getElementById('prev-p-img');
+        var imgInput = document.getElementById('editar-foto');
+        var preview = document.getElementById('prev-editar-foto');
         var reader = new FileReader();
         var file = imgInput.files[0]; 
 
@@ -327,7 +327,7 @@
           }else{
             var nombre = document.getElementById('nombre-edit')
             var username = document.getElementById('user-edit');
-            var img = document.getElementById('prev-p-img');
+            var img = document.getElementById('prev-editar-foto');
 
             document.getElementById('imagenPerfil').src = sessionStorage.getItem('foto_perfil');
             document.getElementById('img-perfil').src = sessionStorage.getItem('foto_perfil');
@@ -350,10 +350,10 @@
       const editarDatos = async () => {
         var nombre = document.getElementById('nombre-edit')
         var username = document.getElementById('user-edit');
-        var img = document.getElementById('prev-p-img');
+        var img = document.getElementById('prev-editar-foto');
         var passw = document.getElementById('contrasena-edit');
         var contrass = CryptoJS.MD5(passw.value).toString();
-        var imgInput = document.getElementById('photo-edit');
+        var imgInput = document.getElementById('editar-foto');
         var reader = new FileReader();
         var file = imgInput.files[0]; 
         
@@ -382,6 +382,7 @@
             sessionStorage.setItem('foto_perfil', respuesta['Item']['foto_perfil']['S']);
             sessionStorage.setItem('nombre', respuesta['Item']['nombre']['S']);
             sessionStorage.setItem('username', respuesta['Item']['username']['S']);
+            for (x = 1; x <= 7; x++) sessionStorage.setItem('tag' + x.toString(), respuesta['Item']['etiquetas']['L'][x - 1]['S']);
             verificarToken();
           } 
         }

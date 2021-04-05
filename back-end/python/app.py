@@ -196,17 +196,31 @@ def editarPerfil():
                 ExtraArgs={'ACL': 'public-read'}
             )
 
+            respuesta = rek.detect_labels(
+                Image={
+                    'S3Object':{
+                            'Bucket':BUCKET_NAME,'Name': ubicacion
+                        }
+                    },
+                MaxLabels=7)
+            
+            etiq = []
+            for x in respuesta['Labels']:
+                response = translate.translate_text(Text=x['Name'],SourceLanguageCode='en',TargetLanguageCode='es')
+                etiq.append({'S':response['TranslatedText']})
+
             dynamo.update_item(
                 TableName='usuario',
                 Key = {
                     'username': {'S': usern}
                 },
-                UpdateExpression = 'set nombre=:n, nFoto=:nf, foto_perfil=:fp, album=:prof',
+                UpdateExpression = 'set nombre=:n, nFoto=:nf, foto_perfil=:fp, album=:prof, etiquetas=:et',
                 ExpressionAttributeValues = {
                     ':n': {'S': nombre},
-                    ':nf': {'S': nFoto + '.' + ext},
+                    ':nf': {'S': nFoto + '-' + uniqueID + '.' + ext},
                     ':fp': {'S': "https://practica2-g45-imagenes.s3.us-east-2.amazonaws.com/" + ubicacion},
-                    ':prof':album_perfil
+                    ':prof':album_perfil,
+                    ':et':{'L': etiq}
                 }
             )
             return jsonify({'status': 202,'Item': usuarioExistente(usern)})
