@@ -578,4 +578,4 @@ def traducirruso():
     return jsonify({'status': 202,'existe': response})
 
 if __name__ == '__main__':
-    app.run(port=7050)
+    app.run(host="0.0.0.0", port=7050)

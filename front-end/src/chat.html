@@ -115,34 +115,27 @@
         <main class="c-main">
           <div class="container-fluid">
             <div class="fade-in">
-                <div class="row">
-                  <div class="col-lg-6">
-                    <div class="card">
-                      <div class="card-header"> Manejo de Sesión</div>
-                      <div class="card-body">
-                        <div class="form-group">
-                            <label>Envía tu mensaje</label>
-                            <textarea class="form-control" id="txt-enviar" type="text" rows="7" placeholder="Escribe algo aquí ..." disabled></textarea>
-                        </div>
-                        <div class="form-group">
-                            <button id="btn-enviar" class="btn btn-sm btn-primary" type="submit" onclick="enviarMensaje()" disabled>Enviar</button>
-                        </div>
-                      </div>
-                      <div class="card-footer">
-                          <button id="btn-inicio" class="btn btn-sm btn-success" type="submit" onclick="inicioConversacion()">Iniciar Conversación</button>
-                          <button id="btn-fin" class="btn btn-sm btn-danger" type="reset" onclick="finConversacion()" disabled>Terminar Conversación</button>
-                      </div>
-                    </div>
+              <div class="card">
+                <div id="header-chat" class="card-header"> Historial</div>
+                <div id="historial" class="card-body"></div>
+              </div>
+              <div class="card">
+                <div class="card-header"> Manejo de Sesión</div>
+                <div class="card-body">
+                  <div class="form-group">
+                    <label>Envía tu mensaje</label>
+                    <input class="form-control" id="txt-enviar" type="text" placeholder="Escribe algo aquí ..." onkeypress="verificar(event)" disabled>
                   </div>
-                  <div class="col-lg-6">
-                    <div class="card">
-                      <div id="header-chat" class="card-header"> Historial</div>
-                      <div id="historial" class="card-body"></div>
-                    </div>
+                  <div class="form-group">
+                    <button id="btn-enviar" class="btn btn-sm btn-primary" type="submit" onclick="enviarMensaje()" disabled>Enviar</button>
                   </div>
-                  <!-- /.col-->
+                </div>
+                <div class="card-footer">
+                    <button id="btn-inicio" class="btn btn-sm btn-success" type="submit" onclick="inicioConversacion()">Iniciar Conversación</button>
+                    <button id="btn-fin" class="btn btn-sm btn-danger" type="reset" onclick="finConversacion()" disabled>Terminar Conversación</button>
                 </div>
               </div>
+            </div>
           </div>
         </main>
         <footer class="c-footer">
@@ -194,11 +187,12 @@
             "username": sessionStorage.getItem('username'),
             "mensaje":mensaje
         });
+        document.getElementById('txt-enviar').value = "";
 
         const respuesta = await connectAPI(datos, 'conversarChat');
 
         hist.innerHTML += '<div class="alert alert-dark text-left" role="alert"><div class="c-avatar"><img src="assets/img/avatars/bot.png" class="c-avatar-img"></div>&nbsp;&nbsp;' + respuesta['message'] + '<small><b>&nbsp;&nbsp;&nbsp;&nbsp;' + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds() + '</b></small></div>'
-
+        window.scrollTo(0,document.body.scrollHeight);
       }
 
       const finConversacion = async () => {
@@ -207,10 +201,12 @@
         });
 
         const respuesta = await connectAPI(datos, 'finChat');
-
-        var hist = document.getElementById('historial');
-        hist.innerHTML += '<div class="alert alert-dark text-left" role="alert">Adiós!</div>'
         location.href='chat.html'
+      }
+
+      function verificar(event){
+        var chCode = ('charCode' in event) ? event.charCode : event.keyCode;
+        if (chCode == 13) enviarMensaje();
       }
     </script>
   </body>
